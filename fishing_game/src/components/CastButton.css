@@ -1,0 +1,30 @@
+.cast-button {
+    font-family: system-ui, sans-serif;
+    font-size: 16px;
+    font-weight: bold;
+    color: #f5efe0;
+    background: linear-gradient(180deg, #04d193, #516300);
+    border: 3px solid #005532;
+    border-radius: 10px;
+    padding: 10px 28px;
+    cursor: pointer;
+    box-shadow: 0px 4px 12px hsla(0, 0%, 0%, 0.35);
+    transition: transform 0.1s ease, box-shadow 0.1s ease;
+}
+
+.cast-button:hover {
+    transform: translateY(-2px);
+    box-shadow: 0px 6px 16px hsla(0, 0%, 0%, 0.4);
+}
+
+.cast-button:active {
+    transform: translateY(2px);
+    box-shadow: 0px 2px 6px hsla(0, 0%, 0%, 0.3);
+}
+
+.cast-button:disabled {
+    background: linear-gradient(180deg, #cecdcd, #3b3b3b);
+    border-color: #4e4e4e;
+    cursor: not-allowed;
+    box-shadow: 0px 4px 12px hsla(0, 0%, 0%, 0.35);
+}

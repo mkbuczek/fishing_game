@@ -1,0 +1,129 @@
+*{
+    box-sizing: border-box;
+}
+
+.fishing-hud {
+  --pond-deep: #0f3d3a;
+  --pond-mid: #1f5c53;
+  --pond-glow: #4a9b8e;
+  --wood: #6b4a30;
+  --wood-dark: #4a3220;
+  --gold: #e8b04b;
+  --cream: #f5efe0;
+
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 10px;
+  font-family: system-ui, sans-serif;
+  color: var(--cream);
+  user-select: none;
+}
+
+.hud-hook {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+.hook-rope {
+  width: 5px;
+  height: 50px;
+  background: var(--wood-dark);
+}
+
+.hook-curl {
+  width: 35px;
+  height: 35px;
+  border: 3px solid var(--gold);
+  border-top-color: transparent;
+  border-radius: 50%;
+  transform: rotate(45deg);
+}
+
+.hud-frame {
+  display: flex;
+  gap: 12px;
+  padding: 14px;
+  background: linear-gradient(180deg, var(--wood), var(--wood-dark));
+  border-radius: 16px;
+  box-shadow: inset 0 0 0 2px hsla(0, 0%, 100%, 0.08),
+    0 8px 20px hsla(0, 0%, 0%, 0.35);
+}
+
+.water-window {
+  position: relative;
+  width: 90px;
+  height: 260px;
+  overflow: hidden;
+  background: linear-gradient(180deg, var(--pond-glow) 0%, var(--pond-mid) 45%, var(--pond-deep) 100%);
+  box-shadow: inset 0 0 18px hsla(0, 0%, 0%, 0.45);
+}
+
+.fish-track {
+  position: relative;
+  width: 100%;
+  height: 100%;
+}
+
+.catch-bar {
+  position: absolute;
+  left: 0;
+  right: 0;
+  box-sizing: border-box;
+  background: hsla(43, 97%, 63%, 0.35);
+  border: 2px solid var(--gold);
+}
+
+.fish-icon {
+  position: absolute;
+  left: 50%;
+  transform: translate(-50%, 50%);
+  font-size: 22px;
+  filter: drop-shadow(0 2px 2px hsla(0, 0%, 0%, 0.4));
+}
+
+.fish-hitbox-debug {
+  position: absolute;
+  left: 0;
+  right: 0;
+  border: 1px dashed red;
+  box-sizing: border-box;
+  pointer-events: none;
+}
+
+.progress-meter {
+  display: flex;
+  align-items: center;
+}
+
+.progress-track {
+  width: 14px;
+  height: 260px;
+  background: hsla(0, 0%, 0%, 0.35);
+  border-radius: 7px;
+  overflow: hidden;
+  display: flex;
+  align-items: flex-end;
+  box-shadow: inset 0 0 0 2px hsla(0, 0%, 100%, 0.08);
+}
+
+.progress-fill {
+  width: 100%;
+  background: linear-gradient(180deg, var(--gold), #c98a2e);
+}
+
+.hud-hint {
+  width: 100%;
+  text-align: center;
+  font-size: 15px;
+  opacity: 0.75;
+  margin: 0;
+}
+
+.hud-hint kbd {
+  background: hsla(0, 0%, 100%, 0.12);
+  padding: 1px 6px;
+  border-radius: 4px;
+  font-size: 16px;
+}
