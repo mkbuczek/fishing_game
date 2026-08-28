@@ -4,6 +4,8 @@ import FishingHUD from './components/FishingHUD';
 import CastButton from './components/CastButton';
 import CurrencyHUD from './components/CurrencyHUD';
 import ResultPopup from './components/ResultPopup';
+import ButtonDock from './components/ButtonDock';
+import DockButton from './components/DockButton';
 
 function App() {
   const [gamePhase, setGamePhase] = useState('idle'); // 'idle' | 'fishing' | 'result'
@@ -42,6 +44,10 @@ function App() {
       <div className="game-area">
         {gamePhase === 'fishing' && <FishingHUD onResult={handleFishingResult} />}
       </div>
+
+      <ButtonDock>
+        <DockButton icon="🛒" label="Shop"/>
+      </ButtonDock>
 
       {gamePhase === 'result' && resultData && (
         <ResultPopup

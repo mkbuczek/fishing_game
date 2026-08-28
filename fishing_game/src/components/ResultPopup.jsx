@@ -27,14 +27,14 @@ export default function ResultPopup({ outcome, reward, onDismiss, autoDismissMs 
  
   return (
     <div className="result-popup-overlay" onClick={handleOverlayClick}>
-      <div className={`result-popup ${isCaught ? 'result-popup--caught' : 'result-popup--escaped'}`}>
-        <p className="result-popup__title">
+      <div className={`result-popup ${isCaught ? 'result-popup-caught' : 'result-popup-escaped'}`}>
+        <p className="result-popup-title">
           {isCaught ? 'Caught!' : 'It got away...'}
         </p>
         {isCaught && (
-          <p className="result-popup__reward">+{reward} 🦪</p>
+          <p className="result-popup-reward">+{reward} 🦪</p>
         )}
-        <p className="result-popup__hint">click to continue</p>
+        <p className="result-popup-hint">click to continue</p>
       </div>
     </div>
   );
