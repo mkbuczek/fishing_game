@@ -13,6 +13,7 @@ function App() {
   const [resultData, setResultData] = useState(null); // { outcome, reward } | null
   const [pearls, setPearls] = useState(0); // Player's current pearl count
   const [activePanel, setActivePanel] = useState(null); // null | 'shop'
+  const [ownedUpgrades, setOwnedUpgrades] = useState([]);
 
   // Handle the "Cast Line" button click
   function handleCast() {
@@ -35,6 +36,15 @@ function App() {
     setResultData(null);
     setGamePhase('idle');
   }
+
+  function handlePurchase(upgrade) {
+    if (pearls < upgrade.cost) {
+      return; //return if not enough money
+    }
+
+    setPearls((prevPearls) => prevPearls - upgrade.cost);
+    setOwnedUpgrades((prevOwned) => [...prevOwned, upgrade.id]);
+  }
   
   return (
     <div className="app">
@@ -52,7 +62,12 @@ function App() {
       </ButtonDock>
 
       {activePanel === 'shop' && (
-        <ShopPanel onClose={() => setActivePanel(null)} />
+        <ShopPanel 
+        onClose={() => setActivePanel(null)}
+        pearls={pearls}
+        ownedUpgrades={ownedUpgrades}
+        onPurchase={handlePurchase}
+        />
       )}
 
       {gamePhase === 'result' && resultData && (

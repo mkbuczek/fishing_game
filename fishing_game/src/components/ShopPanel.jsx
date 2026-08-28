@@ -1,32 +1,38 @@
 import Panel from './Panel';
+import upgrades from '../data/upgrades';
 import './ShopPanel.css';
  
-export default function ShopPanel({ onClose }) {
-  return (
-    <Panel title="Shop" onClose={onClose}>
-      <div className="shop-list">
-        <button className="shop-item">
-            <div className="shop-item-row">
-                <span className="shop-item-name">Faster Reel</span>
-                <span className="shop-item-cost">50 🦪</span>
+export default function ShopPanel({ onClose, pearls, ownedUpgrades, onPurchase }) {
+    const availableUpgrades = upgrades.filter((upgrade) => {
+        return !ownedUpgrades.includes(upgrade.id);
+    });
+
+    return (
+        <Panel title="Shop" onClose={onClose}>
+        {availableUpgrades.length === 0 ? (
+            <p className="shop-empty">No upgrades available! Come back later!</p>
+        ) : (
+            <div className="shop-list">
+            {availableUpgrades.map((upgrade) => {
+                const canAfford = pearls >= upgrade.cost;
+
+                return (
+                <button
+                    key={upgrade.id}
+                    className={canAfford ? 'shop-item' : 'shop-item shop-item-unavailable'}
+                    disabled={!canAfford}
+                    onClick={() => onPurchase(upgrade)}
+                >
+                    <div className="shop-item-row">
+                    <span className="shop-item-name">{upgrade.name}</span>
+                    <span className="shop-item-cost">{upgrade.cost} 🦪</span>
+                    </div>
+                    <span className="shop-item-tooltip">{upgrade.tooltip}</span>
+                </button>
+                );
+            })}
             </div>
-            <span className="shop-item-tooltip">Increases reel speed</span>
-        </button>
-        <button className="shop-item">
-            <div className="shop-item-row">
-                <span className="shop-item-name">Better Hook</span>
-                <span className="shop-item-cost">75 🦪</span>
-            </div>
-            <span className="shop-item-tooltip">Increases catch bar hitbox</span>
-        </button>
-        <button className="shop-item shop-item-unavailable">
-            <div className="shop-item-row">
-                <span className="shop-item-name">Better Bait</span>
-                <span className="shop-item-cost">100 🦪</span>
-            </div>
-            <span className="shop-item-tooltip">Increases bite chance</span>
-        </button>
-      </div>
-    </Panel>
-  );
+        )}
+        </Panel>
+    );
 }
