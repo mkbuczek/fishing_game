@@ -37,7 +37,6 @@ export default function ShopPanel({ onClose, pearls, ownedUpgrades, onPurchase }
                         >
                             <div className="shop-item-row">
                                 <span className="shop-item-name">???</span>
-                                <span className="shop-item-cost">{upgrade.cost} 🦪</span>
                             </div>
                             <p className="shop-item-locked-text">Requires: {prereqNames}</p>
                         </button>
