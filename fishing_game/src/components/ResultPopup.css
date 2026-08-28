@@ -20,23 +20,23 @@
   animation: popup-pop-in 0.2s ease-out;
 }
 
-.result-popup__title {
+.result-popup-title {
   font-size: 1.5rem;
   font-weight: 700;
   margin: 0 0 8px;
 }
 
-.result-popup--escaped .result-popup__title {
+.result-popup-escaped .result-popup-title {
   color: #f0a5a5;
 }
 
-.result-popup__reward {
+.result-popup-reward {
   font-size: 1.25rem;
   color: #e8b04b;
   margin: 0 0 12px;
 }
 
-.result-popup__hint {
+.result-popup-hint {
   font-size: 0.75rem;
   opacity: 0.7;
   margin: 0;

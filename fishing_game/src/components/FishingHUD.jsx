@@ -3,15 +3,15 @@ import { useState, useEffect, useRef } from 'react';
 
 export default function FishingHUD({
   onResult,
-  startingProgress = 40, // % of starting progress value (HARD-CODED FOR NOW)
-  barHeight = 15,   // % of track height (HARD-CODED FOR NOW)
-  upSpeed = 0.75, // % per frame (HARD-CODED FOR NOW)
-  downSpeed = 0.5, // % per frame (HARD-CODED FOR NOW)
+  startingProgress,
+  barHeight,
+  upSpeed,
+  downSpeed,
+  fillRate,
+  drainRate,
   fishHeight = 5, // % of track height the fish occupies (HARD-CODED FOR NOW)
   fishSpeed = 0.25, // % per frame the fish moves towards its target (HARD-CODED FOR NOW)
   fishTargetInterval = 200, // frames between picking a new target (HARD-CODED FOR NOW)
-  fillRate = 0.3, // rate at which progress fills when the bar overlaps with the fish (HARD-CODED FOR NOW)
-  drainRate = 0.25, // rate at which progress drains when the bar does not overlap with the fish (HARD-CODED FOR NOW)
 }) {
 
   const [debug, setDebug] = useState(false);

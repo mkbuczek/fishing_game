@@ -1,0 +1,105 @@
+.shop-list {
+    --wood: #6b4a30;
+    --wood-dark: #4a3220;
+    --gold: #e8b04b;
+    --cream: #f5efe0;
+    --available: #12bd37;
+    --unavailable: #d97b7b;
+
+    display: flex;
+    width: 280px;
+    flex-direction: column;
+    gap: 10px;
+}
+
+.shop-item {
+    display: flex;
+    flex-direction: column;
+    align-items: stretch;
+    width: 280px;
+    background: linear-gradient(180deg, hsl(224, 75%, 49%), hsl(224, 97%, 13%));
+    border: 2px solid hsl(224, 97%, 13%);
+    border-radius: 8px;
+    padding: 10px 14px;
+    color: #f5efe0;
+    font-family: system-ui, sans-serif;
+    font-size: 1rem;
+    cursor: pointer;
+}
+
+.shop-item-name {
+    font-weight: bold;
+    text-shadow: 2px 2px 2px hsl(224, 97%, 13%);
+}
+
+.shop-item:hover {
+    filter: brightness(1.05);
+    transform: translateY(-1px);
+}
+
+.shop-item-cost {
+    color: var(--available);
+    font-weight: 600;
+}
+
+.shop-item-unavailable {
+    opacity: 0.7;
+    filter: brightness(0.7);
+}
+
+.shop-item-unavailable:hover {
+    filter: brightness(0.75);
+}
+
+.shop-item-unavailable .shop-item-cost {
+    color: var(--unavailable);
+}
+
+.shop-item-row {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+}
+
+.shop-item-tooltip {
+    text-align: left;
+    font-style: italic;
+    color: hsl(214, 95%, 62%);
+    white-space: normal;
+    overflow-wrap: break-word;
+}
+
+.shop-empty {
+    font-weight: bold;
+    font-size: 1.1rem;
+    color: var(--cream);
+    text-shadow: 0px 0px 10px hsla(0, 0%, 0%, 0.9);
+    text-align: center;
+    white-space: normal;
+    overflow-wrap: break-word;
+}
+
+.shop-item-locked {
+    background: linear-gradient(180deg, hsl(225, 16%, 51%), hsl(225, 19%, 12%));
+    border: 2px solid hsl(240, 1%, 19%);
+    opacity: 0.9;
+    filter: brightness(0.7);
+}
+
+.shop-item-locked:hover {
+    filter: brightness(0.75);
+}
+
+
+.shop-item-locked .shop-item-cost {
+    color: var(--unavailable);
+}
+
+.shop-item-locked-text {
+    text-align: left;
+    font-style: italic;
+    color: var(--unavailable);
+    white-space: normal;
+    overflow-wrap: break-word;
+    margin: 0;
+}
