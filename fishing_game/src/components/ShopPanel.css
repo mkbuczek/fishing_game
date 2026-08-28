@@ -69,7 +69,7 @@
     overflow-wrap: break-word;
 }
 
-.shop-empty{
+.shop-empty {
     font-weight: bold;
     font-size: 1.1rem;
     color: var(--cream);
@@ -77,4 +77,29 @@
     text-align: center;
     white-space: normal;
     overflow-wrap: break-word;
+}
+
+.shop-item-locked {
+    background: linear-gradient(180deg, hsl(225, 16%, 51%), hsl(225, 19%, 12%));
+    border: 2px solid hsl(240, 1%, 19%);
+    opacity: 0.9;
+    filter: brightness(0.7);
+}
+
+.shop-item-locked:hover {
+    filter: brightness(0.75);
+}
+
+
+.shop-item-locked .shop-item-cost {
+    color: var(--unavailable);
+}
+
+.shop-item-locked-text {
+    text-align: left;
+    font-style: italic;
+    color: var(--unavailable);
+    white-space: normal;
+    overflow-wrap: break-word;
+    margin: 0;
 }

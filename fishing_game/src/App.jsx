@@ -53,7 +53,16 @@ function App() {
   // Handle upgrade purchases
   function handlePurchase(upgrade) {
     if (pearls < upgrade.cost) {
-      return; //return if not enough money
+      return; // return if not enough money
+    }
+
+    const requiredUpgrades = upgrade.requires;
+    if (requiredUpgrades.length !== 0) {
+      const hasAllRequired = requiredUpgrades.every(reqId => ownedUpgrades.includes(reqId));
+
+      if (!hasAllRequired) {
+        return; // return if lacking upgrade prereqs
+      }
     }
 
     setPearls((prevPearls) => prevPearls - upgrade.cost);

@@ -3,9 +3,8 @@ import upgrades from '../data/upgrades';
 import './ShopPanel.css';
  
 export default function ShopPanel({ onClose, pearls, ownedUpgrades, onPurchase }) {
-    const availableUpgrades = upgrades.filter((upgrade) => {
-        return !ownedUpgrades.includes(upgrade.id);
-    });
+    // show all upgrades not yet owned
+    const availableUpgrades = upgrades.filter((upgrade) => !ownedUpgrades.includes(upgrade.id));
 
     return (
         <Panel title="Shop" onClose={onClose}>
@@ -16,7 +15,34 @@ export default function ShopPanel({ onClose, pearls, ownedUpgrades, onPurchase }
         ) : (
             <div className="shop-list">
             {availableUpgrades.map((upgrade) => {
+                const requiredUpgrades = upgrade.requires || [];
+
+                // find IDs not yet in ownedUpgrades
+                const missingReqIds = requiredUpgrades.filter(reqId => !ownedUpgrades.includes(reqId))
+                const isLocked = missingReqIds.length > 0;
                 const canAfford = pearls >= upgrade.cost;
+
+                if (isLocked) {
+                    // convert prereq IDs into human-readable names
+                    const prereqNames = missingReqIds
+                        .map(reqId => upgrades.find(u => u.id === reqId)?.name)
+                        .filter(Boolean)
+                        .join(', ');
+
+                    return (
+                        <button
+                            key={upgrade.id}
+                            className="shop-item shop-item-locked"
+                            disabled
+                        >
+                            <div className="shop-item-row">
+                                <span className="shop-item-name">???</span>
+                                <span className="shop-item-cost">{upgrade.cost} 🦪</span>
+                            </div>
+                            <p className="shop-item-locked-text">Requires: {prereqNames}</p>
+                        </button>
+                    );
+                }
 
                 return (
                 <button
