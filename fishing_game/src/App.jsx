@@ -8,6 +8,9 @@ import ButtonDock from './components/ButtonDock';
 import DockButton from './components/DockButton';
 import ShopPanel from './components/ShopPanel';
 import upgrades from './data/upgrades';
+import fish from './data/fish';
+import fishModifiers from './data/fishModifiers';
+import { pickWeighted } from './utils/pickWeighted';
 
 function App() {
   const baseStats = {
@@ -29,20 +32,27 @@ function App() {
   const [pearls, setPearls] = useState(0); // player's current pearl count
   const [activePanel, setActivePanel] = useState(null); // null | 'shop'
   const [ownedUpgrades, setOwnedUpgrades] = useState([]);
+  const [currentFish, setCurrentFish] = useState(null); // { species, modifier } | null
 
   // handle the "Cast Line" button click
   function handleCast() {
+    const species = pickWeighted(fish);
+    const modifier = pickWeighted(fishModifiers);
+    setCurrentFish({ species, modifier });
     setGamePhase('waiting');
   }
 
   // handle the result of the fishing minigame (win/loss)
   function handleFishingResult(outcome) {
-    const fishReward = Math.floor(Math.random() * (20 - 1 + 1)) + 1; // random hard-coded reward between 1 and 20 pearls
-    const reward = outcome === 'caught' ? fishReward + playerStats.catchReward : 0;
+    const { species, modifier } = currentFish;
+    const reward = outcome === 'caught'
+      ? Math.round(species.basePrice * modifier.rewardMultiplier)  + playerStats.catchReward
+      : 0;
+
+    const catchName = modifier.name ? `${modifier.name} ${species.name}` : species.name;
 
     setPearls((prevPearls) => prevPearls + reward); // update the player's pearl count
-
-    setResultData({ outcome, reward });
+    setResultData({ outcome, reward, catchName, icon: species.icon });
     setGamePhase('result');
   }
 
@@ -156,6 +166,9 @@ function App() {
          downSpeed={playerStats.downSpeed}
          fillRate={playerStats.fillRate}
          drainRate={playerStats.drainRate}
+         fishHeight={currentFish.species.fishHeight}
+         fishSpeed={currentFish.species.fishSpeed}
+         fishTargetInterval={currentFish.species.fishTargetInterval}
          />}
       </div>
 
@@ -176,6 +189,8 @@ function App() {
         <ResultPopup
           outcome={resultData.outcome}
           reward={resultData.reward}
+          catchName={resultData.catchName}
+          icon={resultData.icon}
           onDismiss={handleDismissResult}
         />
       )}
