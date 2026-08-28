@@ -4,8 +4,10 @@ const upgrades = [
         name: "Faster Reel",
         tooltip: "Increases how fast progress fills",
         cost: 10,
-        statKey: "reelSpeed",
+        statKey: "fillRate",
         statBonus: 0.15,
+        category: "stat",
+        requires: [],
     },
     {
         id: "bigger-hitbox-1",
@@ -14,6 +16,8 @@ const upgrades = [
         cost: 25,
         statKey: "barHeight",
         statBonus: 5,
+        category: "stat",
+        requires: [],
     },
     {
         id: "better-bait-1",
@@ -22,6 +26,18 @@ const upgrades = [
         cost: 30,
         statKey: "biteFrequency",
         statBonus: 0.1,
+        category: "stat",
+        requires: [],
+    },
+    {
+        id: "catch-reward-1",
+        name: "Shiny Fish",
+        tooltip: "Increases fish catch reward",
+        cost: 50,
+        statKey: "catchReward",
+        statBonus: 5,
+        category: "stat",
+        requires: ["faster-reel-1","bigger-hitbox-1","better-bait-1"],
     },
 ];
 

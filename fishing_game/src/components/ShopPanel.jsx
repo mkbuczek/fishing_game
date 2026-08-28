@@ -10,7 +10,9 @@ export default function ShopPanel({ onClose, pearls, ownedUpgrades, onPurchase }
     return (
         <Panel title="Shop" onClose={onClose}>
         {availableUpgrades.length === 0 ? (
-            <p className="shop-empty">No upgrades available! Come back later!</p>
+            <div className="shop-list">
+                <p className="shop-empty">No upgrades available! Come back later!</p>
+            </div>
         ) : (
             <div className="shop-list">
             {availableUpgrades.map((upgrade) => {
