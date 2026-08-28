@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import './App.css';
 import FishingHUD from './components/FishingHUD';
 import CastButton from './components/CastButton';
@@ -8,6 +8,9 @@ import ButtonDock from './components/ButtonDock';
 import DockButton from './components/DockButton';
 import ShopPanel from './components/ShopPanel';
 import upgrades from './data/upgrades';
+import fish from './data/fish';
+import fishModifiers from './data/fishModifiers';
+import { pickWeighted } from './utils/pickWeighted';
 
 function App() {
   const baseStats = {
@@ -19,38 +22,47 @@ function App() {
     drainRate: 0.25, // rate at which progress drains when the bar does not overlap with the fish
     catchReward: 0, // amount of extra pearls per catch
     luck: 0,
-    biteFrequency: 15,
+    biteMin: 0.5, // fastest possible bite, seconds
+    biteMax: 10, // slowest possible bite, seconds
+    biteExponent: 0.5, // <1 = skews towards slow, >1 = skews towards fast
   }
 
-  const [gamePhase, setGamePhase] = useState('idle'); // 'idle' | 'fishing' | 'result'
+  const [gamePhase, setGamePhase] = useState('idle'); // 'idle' | 'waiting' | 'fishing' | 'result'
   const [resultData, setResultData] = useState(null); // { outcome, reward } | null
-  const [pearls, setPearls] = useState(0); // Player's current pearl count
+  const [pearls, setPearls] = useState(0); // player's current pearl count
   const [activePanel, setActivePanel] = useState(null); // null | 'shop'
   const [ownedUpgrades, setOwnedUpgrades] = useState([]);
+  const [currentFish, setCurrentFish] = useState(null); // { species, modifier } | null
 
-  // Handle the "Cast Line" button click
+  // handle the "Cast Line" button click
   function handleCast() {
-    setGamePhase('fishing');
+    const species = pickWeighted(fish);
+    const modifier = pickWeighted(fishModifiers);
+    setCurrentFish({ species, modifier });
+    setGamePhase('waiting');
   }
 
-  // Handle the result of the fishing minigame (win/loss)
+  // handle the result of the fishing minigame (win/loss)
   function handleFishingResult(outcome) {
-    const fishReward = Math.floor(Math.random() * (20 - 1 + 1)) + 1; // Random hard-coded reward between 1 and 20 pearls
-    const reward = outcome === 'caught' ? fishReward + playerStats.catchReward : 0;
+    const { species, modifier } = currentFish;
+    const reward = outcome === 'caught'
+      ? Math.round(species.basePrice * modifier.rewardMultiplier)  + playerStats.catchReward
+      : 0;
 
-    setPearls((prevPearls) => prevPearls + reward); // Update the player's pearl count
+    const catchName = modifier.name ? `${modifier.name} ${species.name}` : species.name;
 
-    setResultData({ outcome, reward });
+    setPearls((prevPearls) => prevPearls + reward); // update the player's pearl count
+    setResultData({ outcome, reward, catchName, icon: species.icon, gradient: modifier.gradient });
     setGamePhase('result');
   }
 
-  // Handle the dismissal of the result popup
+  // handle the dismissal of the result popup
   function handleDismissResult() {
     setResultData(null);
     setGamePhase('idle');
   }
 
-  // Handle upgrade purchases
+  // handle upgrade purchases
   function handlePurchase(upgrade) {
     if (pearls < upgrade.cost) {
       return; // return if not enough money
@@ -87,6 +99,45 @@ function App() {
   // update player stats
   const playerStats = computePlayerStats(ownedUpgrades);
 
+  // handle fish bite delay after cast
+  useEffect(() => {
+    if (gamePhase !== 'waiting') return;
+
+    const { biteMin, biteMax, biteExponent } = playerStats;
+    const biteRoll = Math.random() ** biteExponent;
+    const delaySeconds = biteMin + biteRoll * (biteMax - biteMin);
+
+    const timer = setTimeout(() => {
+      setGamePhase('fishing');
+    }, delaySeconds * 1000);
+
+    return () => clearTimeout(timer);
+  }, [gamePhase, playerStats.biteMin, playerStats.biteMax, playerStats.biteExponent]);
+
+  // handle cancelling a cast
+  useEffect(() => {
+    if (gamePhase !== 'waiting') return;
+
+    function handleCancelKey(event) {
+      if (event.code === 'Space') {
+        event.preventDefault();
+        setGamePhase('idle');
+      }
+    }
+
+    function handleCancelClick() {
+      setGamePhase('idle');
+    }
+
+    window.addEventListener('keydown', handleCancelKey);
+    window.addEventListener('mousedown', handleCancelClick);
+
+    return () => {
+      window.removeEventListener('keydown', handleCancelKey);
+      window.removeEventListener('mousedown', handleCancelClick);
+    };
+  }, [gamePhase]);
+
   return (
     <div className="app">
       <div className="top-bar">
@@ -95,6 +146,18 @@ function App() {
       </div>
  
       <div className="game-area">
+        {gamePhase === 'waiting' && (
+          <div className="waiting-state">
+            <span className="waiting-bobber">🎣</span>
+            <p className="waiting-text">Waiting for a bite
+              <span className="waiting-dot">.</span>
+              <span className="waiting-dot">.</span>
+              <span className="waiting-dot">.</span>
+            </p>
+             <p className="waiting-text-cancel"><kbd>click</kbd> or <kbd>space</kbd> to cancel</p>
+          </div>
+        )}
+
         {gamePhase === 'fishing' && <FishingHUD
          onResult={handleFishingResult}
          startingProgress={playerStats.startingProgress}
@@ -103,6 +166,9 @@ function App() {
          downSpeed={playerStats.downSpeed}
          fillRate={playerStats.fillRate}
          drainRate={playerStats.drainRate}
+         fishHeight={currentFish.species.fishHeight}
+         fishSpeed={currentFish.species.fishSpeed}
+         fishTargetInterval={currentFish.species.fishTargetInterval}
          />}
       </div>
 
@@ -123,6 +189,9 @@ function App() {
         <ResultPopup
           outcome={resultData.outcome}
           reward={resultData.reward}
+          catchName={resultData.catchName}
+          icon={resultData.icon}
+          gradient={resultData.gradient}
           onDismiss={handleDismissResult}
         />
       )}
