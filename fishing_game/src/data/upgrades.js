@@ -22,10 +22,10 @@ const upgrades = [
     {
         id: "better-bait-1",
         name: "Better Bait",
-        tooltip: "Increases fish bite frequency",
+        tooltip: "Makes fish bite quicker",
         cost: 30,
-        statKey: "biteFrequency",
-        statBonus: 0.1,
+        statKey: "biteExponent",
+        statBonus: 2,
         category: "stat",
         requires: [],
     },
