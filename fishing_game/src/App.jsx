@@ -6,11 +6,13 @@ import CurrencyHUD from './components/CurrencyHUD';
 import ResultPopup from './components/ResultPopup';
 import ButtonDock from './components/ButtonDock';
 import DockButton from './components/DockButton';
+import ShopPanel from './components/ShopPanel';
 
 function App() {
   const [gamePhase, setGamePhase] = useState('idle'); // 'idle' | 'fishing' | 'result'
   const [resultData, setResultData] = useState(null); // { outcome, reward } | null
   const [pearls, setPearls] = useState(0); // Player's current pearl count
+  const [activePanel, setActivePanel] = useState(null); // null | 'shop'
 
   // Handle the "Cast Line" button click
   function handleCast() {
@@ -46,8 +48,12 @@ function App() {
       </div>
 
       <ButtonDock>
-        <DockButton icon="🛒" label="Shop"/>
+        <DockButton icon="🛒" label="Shop" onClick={() => setActivePanel('shop')} disabled={gamePhase !== 'idle'}/>
       </ButtonDock>
+
+      {activePanel === 'shop' && (
+        <ShopPanel onClose={() => setActivePanel(null)} />
+      )}
 
       {gamePhase === 'result' && resultData && (
         <ResultPopup
