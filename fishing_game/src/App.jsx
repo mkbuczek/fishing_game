@@ -52,7 +52,7 @@ function App() {
     const catchName = modifier.name ? `${modifier.name} ${species.name}` : species.name;
 
     setPearls((prevPearls) => prevPearls + reward); // update the player's pearl count
-    setResultData({ outcome, reward, catchName, icon: species.icon });
+    setResultData({ outcome, reward, catchName, icon: species.icon, gradient: modifier.gradient });
     setGamePhase('result');
   }
 
@@ -191,6 +191,7 @@ function App() {
           reward={resultData.reward}
           catchName={resultData.catchName}
           icon={resultData.icon}
+          gradient={resultData.gradient}
           onDismiss={handleDismissResult}
         />
       )}
