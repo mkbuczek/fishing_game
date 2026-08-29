@@ -13,6 +13,7 @@ import fishModifiers from './data/fishModifiers';
 import { pickWeighted } from './utils/pickWeighted';
 import { getSellPrice } from './utils/getSellPrice';
 import InventoryPanel from './components/InventoryPanel';
+import { getTierCost } from './utils/getTierCost';
 
 function App() {
   const baseStats = {
@@ -22,7 +23,7 @@ function App() {
     downSpeed: 0.5, // rate at which the catch bar moves down
     fillRate: 0.3, // rate at which progress fills when the bar overlaps with the fish
     drainRate: 0.25, // rate at which progress drains when the bar does not overlap with the fish
-    sellReward: 0, // amount of extra pearls added to the sell price of fish
+    sellMultiplier: 1, // multiplier for fish price increase
     luck: 0,
     biteMin: 0.5, // fastest possible bite, seconds
     biteMax: 10, // slowest possible bite, seconds
@@ -34,7 +35,7 @@ function App() {
   const [resultData, setResultData] = useState(null); // { outcome, reward } | null
   const [pearls, setPearls] = useState(0); // player's current pearl count
   const [activePanel, setActivePanel] = useState(null); // null | 'shop'
-  const [ownedUpgrades, setOwnedUpgrades] = useState([]);
+  const [ownedUpgrades, setOwnedUpgrades] = useState({}); // { lineId: levelOwned }
   const [currentFish, setCurrentFish] = useState(null); // { species, modifier } | null
   const [inventory, setInventory] = useState([]);
 
@@ -78,32 +79,34 @@ function App() {
 
   // handle upgrade purchases
   function handlePurchase(upgrade) {
-    if (pearls < upgrade.cost) {
-      return; // return if not enough money
-    }
+    const currentLevel = ownedUpgrades[upgrade.id] || 0;
+    if (currentLevel >= upgrade.tiers.length) return; // return if already fully maxed
 
-    const requiredUpgrades = upgrade.requires;
-    if (requiredUpgrades.length !== 0) {
-      const hasAllRequired = requiredUpgrades.every(reqId => ownedUpgrades.includes(reqId));
+    const nextTier = upgrade.tiers[currentLevel];
+    const cost = getTierCost(upgrade, currentLevel);
+    if (pearls < cost) return; // return if not enough money
 
-      if (!hasAllRequired) {
-        return; // return if lacking upgrade prereqs
-      }
-    }
+    const meetsRequirements = nextTier.requires.every(
+      (req) => (ownedUpgrades[req.id] || 0) >= req.level
+    );
+    if (!meetsRequirements) return; // return if prereqs are not met
 
-    setPearls((prevPearls) => prevPearls - upgrade.cost);
-    setOwnedUpgrades((prevOwned) => [...prevOwned, upgrade.id]);
+    //else, buy the upgrade
+    setPearls((prevPearls) => prevPearls - cost);
+    setOwnedUpgrades((prevOwned) => ({
+      ...prevOwned,
+      [upgrade.id]: currentLevel + 1,
+    }));
   }
   
   // compute player stats based on upgrade bonuses
   function computePlayerStats(ownedUpgrades) {
     const stats = { ...baseStats }; // spread stats array
 
-    ownedUpgrades.forEach((id) => {
-      const upgrade = upgrades.find((u) => u.id === id);
-
-      if (upgrade) {
-        stats[upgrade.statKey] += upgrade.statBonus;
+    upgrades.forEach((upgrade) => {
+      const currentLevel = ownedUpgrades[upgrade.id] || 0;
+      for (let i = 0; i < currentLevel; i++) {
+        stats[upgrade.statKey] += upgrade.tiers[i].bonus;
       }
     });
 
@@ -159,7 +162,7 @@ function App() {
 
     const species = fish.find((f) => f.id === item.speciesId);
     const modifier = fishModifiers.find((m) => m.id === item.modifierId);
-    const sellPrice = getSellPrice(species, modifier, playerStats.sellReward);
+    const sellPrice = getSellPrice(species, modifier, playerStats.sellMultiplier);
 
     // remove fish from inventory and give respective pearls
     setInventory((prevInventory) => prevInventory.filter((f) => f.instanceId !== instanceId));
@@ -225,7 +228,7 @@ function App() {
           onClose={() => setActivePanel(null)}
           inventory={inventory}
           capacity={playerStats.inventoryCapacity}
-          sellReward={playerStats.sellReward}
+          sellMultiplier={playerStats.sellMultiplier}
           onSell={handleSellFish}
         />
       )}

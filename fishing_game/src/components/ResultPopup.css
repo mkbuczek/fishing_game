@@ -53,13 +53,12 @@
 }
 
 .catch-name-gradient {
-  background: linear-gradient(90deg, var(--grad-start), var(--grad-end), var(--grad-start));
   background-size: 200% auto;
   -webkit-background-clip: text;
   background-clip: text;
   color: transparent;
   -webkit-text-fill-color: transparent;
-  animation: gradient-shift 2s linear infinite;
+  animation: gradient-shift var(--anim-duration, 2s) linear infinite;
 }
 
 @keyframes gradient-shift {
