@@ -5,7 +5,7 @@ import { getSellPrice } from '../utils/getSellPrice';
 import './InventoryPanel.css';
 import { buildGradient } from '../utils/buildGradient';
 
-export default function InventoryPanel({ onClose, inventory, capacity, sellReward, onSell }) {
+export default function InventoryPanel({ onClose, inventory, capacity, sellMultiplier, onSell }) {
     return (
         <Panel title={`Inventory (${inventory.length}/${capacity})`} onClose={onClose} className="panel-inventory">
             {inventory.length === 0 ? (
@@ -16,7 +16,7 @@ export default function InventoryPanel({ onClose, inventory, capacity, sellRewar
                         const species = fish.find((f) => f.id === item.speciesId);
                         const modifier = fishModifiers.find((m) => m.id === item.modifierId);
                         const displayName = modifier.name ? `${modifier.name} ${species.name}` : species.name;
-                        const sellPrice = getSellPrice(species, modifier, sellReward);
+                        const sellPrice = getSellPrice(species, modifier, sellMultiplier);
 
                         return (
                             <div key={item.instanceId} className="inventory-item">

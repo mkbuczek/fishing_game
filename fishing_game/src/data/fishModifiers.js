@@ -30,7 +30,7 @@ const fishModifiers = [
     {
         id: "prismatic",
         name: "Prismatic",
-        rewardMultiplier: 50,
+        rewardMultiplier: 20,
         spawnWeight: 20,
         gradient: ["#ff4b4b", "#ff8533", "#ffd11a", "#47d147", "#3399ff", "#9955ff"],
     },
