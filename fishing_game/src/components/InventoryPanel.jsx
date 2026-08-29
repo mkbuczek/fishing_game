@@ -3,6 +3,7 @@ import fish from '../data/fish';
 import fishModifiers from '../data/fishModifiers';
 import { getSellPrice } from '../utils/getSellPrice';
 import './InventoryPanel.css';
+import { buildGradient } from '../utils/buildGradient';
 
 export default function InventoryPanel({ onClose, inventory, capacity, sellReward, onSell }) {
     return (
@@ -22,11 +23,7 @@ export default function InventoryPanel({ onClose, inventory, capacity, sellRewar
                                 <div className="inventory-item-square">
                                     <span
                                         className="catch-name-gradient inventory-item-name"
-                                        style={{
-                                            '--grad-start': modifier.gradient[0],
-                                            '--grad-end': modifier.gradient[1],
-                                            '--anim-duration': modifier.animationDuration,
-                                        }}  
+                                        style={{backgroundImage: buildGradient(modifier.gradient)}}  
                                     >
                                         {displayName}
                                     </span>

@@ -1,5 +1,6 @@
 import { useEffect, useState } from 'react';
 import './ResultPopup.css';
+import { buildGradient } from '../utils/buildGradient';
  
 export default function ResultPopup({ outcome, catchName, icon, gradient, onDismiss, autoDismissMs = 5000 }) {
   // Auto-dismiss after a delay, but the effect cleans itself up if the
@@ -34,7 +35,7 @@ export default function ResultPopup({ outcome, catchName, icon, gradient, onDism
               {icon} Caught a{' '}
               <span
                 className="catch-name-gradient"
-                style={{ '--grad-start': gradient[0], '--grad-end': gradient[1] }}
+                style={{backgroundImage: buildGradient(gradient)}} 
               >
                 {catchName}
               </span>
