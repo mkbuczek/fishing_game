@@ -32,9 +32,9 @@ const upgrades = [
     {
         id: "catch-reward-1",
         name: "Shiny Fish",
-        tooltip: "Increases fish catch reward",
+        tooltip: "Increases fish sell price",
         cost: 50,
-        statKey: "catchReward",
+        statKey: "sellReward",
         statBonus: 5,
         category: "stat",
         requires: ["faster-reel-1","bigger-hitbox-1","better-bait-1"],

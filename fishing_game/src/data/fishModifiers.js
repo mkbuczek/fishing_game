@@ -11,14 +11,14 @@ const fishModifiers = [
         name: "Gold",
         rewardMultiplier: 5,
         spawnWeight: 30,
-        gradient: ["#fff6c9", "#e8b04b"],
+        gradient: ["#ffe45c", "#af7405"],
     },
     {
         id: "diamond",
         name: "Diamond",
         rewardMultiplier: 10,
         spawnWeight: 25,
-        gradient: ["#c9f0ff", "#4a9bff"],
+        gradient: ["#8cd8f7", "#4a9bff"],
     },
 ];
 

@@ -11,6 +11,8 @@ import upgrades from './data/upgrades';
 import fish from './data/fish';
 import fishModifiers from './data/fishModifiers';
 import { pickWeighted } from './utils/pickWeighted';
+import { getSellPrice } from './utils/getSellPrice';
+import InventoryPanel from './components/InventoryPanel';
 
 function App() {
   const baseStats = {
@@ -20,11 +22,12 @@ function App() {
     downSpeed: 0.5, // rate at which the catch bar moves down
     fillRate: 0.3, // rate at which progress fills when the bar overlaps with the fish
     drainRate: 0.25, // rate at which progress drains when the bar does not overlap with the fish
-    catchReward: 0, // amount of extra pearls per catch
+    sellReward: 0, // amount of extra pearls added to the sell price of fish
     luck: 0,
     biteMin: 0.5, // fastest possible bite, seconds
     biteMax: 10, // slowest possible bite, seconds
     biteExponent: 0.5, // <1 = skews towards slow, >1 = skews towards fast
+    inventoryCapacity: 5 // how many fish can be stored in the inventory
   }
 
   const [gamePhase, setGamePhase] = useState('idle'); // 'idle' | 'waiting' | 'fishing' | 'result'
@@ -33,6 +36,7 @@ function App() {
   const [activePanel, setActivePanel] = useState(null); // null | 'shop'
   const [ownedUpgrades, setOwnedUpgrades] = useState([]);
   const [currentFish, setCurrentFish] = useState(null); // { species, modifier } | null
+  const [inventory, setInventory] = useState([]);
 
   // handle the "Cast Line" button click
   function handleCast() {
@@ -45,14 +49,24 @@ function App() {
   // handle the result of the fishing minigame (win/loss)
   function handleFishingResult(outcome) {
     const { species, modifier } = currentFish;
-    const reward = outcome === 'caught'
-      ? Math.round(species.basePrice * modifier.rewardMultiplier)  + playerStats.catchReward
-      : 0;
+
+    if (outcome === 'caught') {
+      const newFish = {
+        instanceId: crypto.randomUUID(),
+        speciesId: species.id,
+        modifierId: modifier.id,
+      };
+      setInventory((prevInventory) => [...prevInventory, newFish]);
+    }
 
     const catchName = modifier.name ? `${modifier.name} ${species.name}` : species.name;
 
-    setPearls((prevPearls) => prevPearls + reward); // update the player's pearl count
-    setResultData({ outcome, reward, catchName, icon: species.icon, gradient: modifier.gradient });
+    setResultData({
+      outcome,
+      catchName,
+      icon: species.icon,
+      gradient: modifier.gradient,
+    });
     setGamePhase('result');
   }
 
@@ -138,10 +152,30 @@ function App() {
     };
   }, [gamePhase]);
 
+  // handle selling fish from the inventory
+  function handleSellFish(instanceId) {
+    const item = inventory.find((f) => f.instanceId === instanceId);
+    if (!item) return;
+
+    const species = fish.find((f) => f.id === item.speciesId);
+    const modifier = fishModifiers.find((m) => m.id === item.modifierId);
+    const sellPrice = getSellPrice(species, modifier, playerStats.sellReward);
+
+    // remove fish from inventory and give respective pearls
+    setInventory((prevInventory) => prevInventory.filter((f) => f.instanceId !== instanceId));
+    setPearls((prevPearls) => prevPearls + sellPrice);
+  }
+
+  // check if inventory is full
+  const isInventoryFull = inventory.length === playerStats.inventoryCapacity;
+
   return (
     <div className="app">
       <div className="top-bar">
-        <CastButton onClick={handleCast} disabled={gamePhase !== 'idle'} />
+        <div className="cast-wrapper">
+          <CastButton onClick={handleCast} disabled={gamePhase !== 'idle' || isInventoryFull} />
+          {isInventoryFull && <p className="inventory-full-text">Your inventory is full!</p>}
+        </div>
         <CurrencyHUD pearls={pearls} />
       </div>
  
@@ -174,14 +208,25 @@ function App() {
 
       <ButtonDock>
         <DockButton icon="🛒" label="Shop" onClick={() => setActivePanel('shop')} disabled={gamePhase !== 'idle'}/>
+        <DockButton icon="💼" label="Inventory" onClick={() => setActivePanel('inventory')} disabled={gamePhase !== 'idle'}/>
       </ButtonDock>
 
       {activePanel === 'shop' && (
         <ShopPanel 
-        onClose={() => setActivePanel(null)}
-        pearls={pearls}
-        ownedUpgrades={ownedUpgrades}
-        onPurchase={handlePurchase}
+          onClose={() => setActivePanel(null)}
+          pearls={pearls}
+          ownedUpgrades={ownedUpgrades}
+          onPurchase={handlePurchase}
+        />
+      )}
+
+      {activePanel === 'inventory' && (
+        <InventoryPanel 
+          onClose={() => setActivePanel(null)}
+          inventory={inventory}
+          capacity={playerStats.inventoryCapacity}
+          sellReward={playerStats.sellReward}
+          onSell={handleSellFish}
         />
       )}
 
