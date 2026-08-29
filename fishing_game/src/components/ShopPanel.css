@@ -7,16 +7,23 @@
     --unavailable: #d97b7b;
 
     display: flex;
-    width: 280px;
+    width: 95%;
+    align-items: center;
     flex-direction: column;
     gap: 10px;
+}
+
+.shop-panel-content {
+    display: flex;
+    justify-content: center;
+    min-width: 400px;
 }
 
 .shop-item {
     display: flex;
     flex-direction: column;
     align-items: stretch;
-    width: 280px;
+    width: 100%;
     background: linear-gradient(180deg, hsl(224, 75%, 49%), hsl(224, 97%, 13%));
     border: 2px solid hsl(224, 97%, 13%);
     border-radius: 8px;

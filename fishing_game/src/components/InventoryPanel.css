@@ -1,0 +1,74 @@
+.inventory-list {
+    display: grid;
+    grid-template-columns: repeat(8, 1fr);
+    gap: 10px;
+}
+
+.inventory-panel-content {
+    min-width: 1000px;
+}
+
+.inventory-item {
+    display: flex;
+    width: 100px;
+    flex-direction: column;
+    align-items: center;
+    gap: 6px;
+}
+
+.inventory-item-square {
+    width: 100%;
+    aspect-ratio: 1 / 1;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: space-between;
+    gap: 2px;
+    background: hsla(0, 0%, 0%, 0.25);
+    border: 4px solid rgba(232, 176, 75, 0.5);
+    border-radius: 10px;
+    padding: 4px;
+    overflow: hidden;
+}
+
+.inventory-item-icon {
+    font-size: 2rem;
+}
+
+.inventory-item-name {
+    line-height: 1;
+    font-size: 0.8rem;
+    font-weight: bold;
+    text-align: center;
+    word-break: break-word;
+}
+
+.inventory-sell-button {
+    width: 100%;
+    font-size: 0.8rem;
+    font-weight: bold;
+    padding: 4px 6px;
+    background: linear-gradient(180deg, #664126, #302015);
+    border: 2px solid #e8b04b;
+    border-radius: 6px;
+    color: #12bd37;
+    text-shadow: 1px 1px 0px hsla(0, 0%, 0%, 0.9);
+    cursor: pointer;
+    white-space: nowrap;
+    text-align: center;
+}
+
+.inventory-sell-button:hover {
+    filter: brightness(1.1);
+    transform: translateY(-1px);
+}
+
+.inventory-empty-text{
+    font-weight: bold;
+    font-size: 1.1rem;
+    color: var(--cream);
+    text-shadow: 0px 0px 10px hsla(0, 0%, 0%, 0.9);
+    text-align: center;
+    white-space: normal;
+    overflow-wrap: break-word;
+}

@@ -28,6 +28,15 @@
     overflow: hidden;
 }
 
+.panel-content {
+    padding: 18px;
+    overflow-y: auto;
+    height: 500px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+}
+
 .panel-header {
     display: flex;
     align-items: center;
@@ -59,7 +68,15 @@
 
 .panel-content {
     padding: 18px;
-    overflow-y: auto;
+    height: 500px;
+}
+
+.panel-inventory {
+    width: 950px;
+}
+
+.panel-shop {
+    width: 400px;
 }
 
 @keyframes panel-overlay-fade-in {

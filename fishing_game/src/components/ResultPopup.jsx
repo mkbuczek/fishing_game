@@ -1,7 +1,7 @@
 import { useEffect, useState } from 'react';
 import './ResultPopup.css';
  
-export default function ResultPopup({ outcome, reward, catchName, icon, gradient, onDismiss, autoDismissMs = 5000 }) {
+export default function ResultPopup({ outcome, catchName, icon, gradient, onDismiss, autoDismissMs = 5000 }) {
   // Auto-dismiss after a delay, but the effect cleans itself up if the
   // player dismisses manually first via the overlay's onClick below.
   useEffect(() => {
@@ -44,10 +44,6 @@ export default function ResultPopup({ outcome, reward, catchName, icon, gradient
             'It got away...'
           )}
         </p>
-
-        {isCaught && (
-          <p className="result-popup-reward">+{reward} 🦪</p>
-        )}
         <p className="result-popup-hint">click to continue</p>
       </div>
     </div>
