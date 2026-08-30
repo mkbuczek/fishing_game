@@ -10,7 +10,7 @@ import ShopPanel from './components/ShopPanel';
 import upgrades from './data/upgrades';
 import fish from './data/fish';
 import fishModifiers from './data/fishModifiers';
-import { pickWeighted } from './utils/pickWeighted';
+import { pickWeighted, rollBestModifier } from './utils/pickWeighted';
 import { getSellPrice } from './utils/getSellPrice';
 import InventoryPanel from './components/InventoryPanel';
 import { getTierCost } from './utils/getTierCost';
@@ -44,7 +44,7 @@ function App() {
   // handle the "Cast Line" button click
   function handleCast() {
     const species = pickWeighted(fish);
-    const modifier = pickWeighted(fishModifiers);
+    const modifier = rollBestModifier(fishModifiers, playerStats.luck);
     setCurrentFish({ species, modifier });
     setGamePhase('waiting');
   }

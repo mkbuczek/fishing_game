@@ -52,11 +52,11 @@ const upgrades = [
         baseCost: 50,
         costGrowth: 1.6,
         tiers: [
-            { name: "Shinier Fish", bonus: 0.1, requires: [] },
-            { name: "Fish Smoker", bonus: 0.1, requires: [] },
-            { name: "Golden Paint", bonus: 0.2, requires: [{ id: 'quicker-bite', level: 3 }, { id: 'faster-reel', level: 3 }, { id: 'inventory-capacity', level: 3 }] },
-            { name: "False Advertising", bonus: 0.1, requires: [] },
-            { name: "Diamond Paint", bonus: 0.1, requires: [] },
+            { name: "Shinier Fish", bonus: 0.5, requires: [] },
+            { name: "Fish Smoker", bonus: 0.5, requires: [] },
+            { name: "Golden Paint", bonus: 1, requires: [{ id: 'quicker-bite', level: 3 }, { id: 'faster-reel', level: 3 }, { id: 'inventory-capacity', level: 3 }] },
+            { name: "False Advertising", bonus: 0.5, requires: [] },
+            { name: "Diamond Paint", bonus: 0.5, requires: [] },
         ],
     },
     {

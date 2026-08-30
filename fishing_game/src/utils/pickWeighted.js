@@ -13,3 +13,16 @@ export function pickWeighted(items) {
  
   return items[items.length - 1];
 }
+
+// luck implementation
+// rerolls fish modifier n times and picks best modifier
+export function rollBestModifier(modifiers, rerollCount) {
+    let best = pickWeighted(modifiers);
+    for (let i = 0; i < rerollCount; i++) {
+      const attempt = pickWeighted(modifiers);
+      if (attempt.rewardMultiplier > best.rewardMultiplier) {
+        best = attempt;
+      }
+    }
+    return best;
+}
