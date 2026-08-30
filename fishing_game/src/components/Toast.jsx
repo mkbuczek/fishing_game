@@ -1,14 +1,20 @@
-import { useEffect } from 'react';
+import { useEffect, useRef } from 'react';
 import './Toast.css';
  
 export default function Toast({ message, onDismiss, duration = 2500 }) {
+  const onDismissRef = useRef(onDismiss);
+
   useEffect(() => {
-    const timer = setTimeout(onDismiss, duration);
+    onDismissRef.current = onDismiss;
+  }, [onDismiss]);
+
+  useEffect(() => {
+    const timer = setTimeout(() => onDismissRef.current(), duration);
     return () => clearTimeout(timer);
-  }, [onDismiss, duration]);
- 
+  }, [duration]);
+
   return (
-    <div className="toast" onClick={onDismiss}>
+    <div className="toast" onClick={() => onDismissRef.current()}>
       {message}
     </div>
   );
