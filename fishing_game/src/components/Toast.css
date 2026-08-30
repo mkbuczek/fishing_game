@@ -1,0 +1,19 @@
+.toast {
+    pointer-events: auto;
+    background: linear-gradient(180deg, #6b4a30, #4a3220);
+    border: 2px solid #e8b04b;
+    border-radius: 8px;
+    padding: 8px 14px;
+    color: #f5efe0;
+    font-family: system-ui, sans-serif;
+    font-size: 0.85rem;
+    font-weight: 600;
+    box-shadow: 0 4px 12px hsla(0, 0%, 0%, 0.35);
+    cursor: pointer;
+    animation: toast-slide-in 0.2s ease-out;
+}
+ 
+@keyframes toast-slide-in {
+    from { transform: translateX(30px); opacity: 0; }
+    to { transform: translateX(0); opacity: 1; }
+}

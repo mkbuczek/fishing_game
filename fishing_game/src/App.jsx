@@ -15,6 +15,7 @@ import { getSellPrice } from './utils/getSellPrice';
 import InventoryPanel from './components/InventoryPanel';
 import { getTierCost } from './utils/getTierCost';
 import BestiaryPanel from './components/BestiaryPanel';
+import ToastContainer from './components/ToastContainer';
 
 function App() {
   const baseStats = {
@@ -34,12 +35,13 @@ function App() {
 
   const [gamePhase, setGamePhase] = useState('idle'); // 'idle' | 'waiting' | 'fishing' | 'result'
   const [resultData, setResultData] = useState(null); // { outcome, reward } | null
-  const [pearls, setPearls] = useState(0); // player's current pearl count
+  const [pearls, setPearls] = useState(10000); // player's current pearl count
   const [activePanel, setActivePanel] = useState(null); // null | 'shop'
   const [ownedUpgrades, setOwnedUpgrades] = useState({}); // { lineId: levelOwned }
   const [currentFish, setCurrentFish] = useState(null); // { species, modifier } | null
   const [inventory, setInventory] = useState([]);
   const [bestiary, setBestiary] = useState({}) // key: `${speciesId}-${modifierId}` => catch count
+  const [toasts, setToasts] = useState([]);
 
   // update player stats
   const playerStats = computePlayerStats(ownedUpgrades);
@@ -113,6 +115,7 @@ function App() {
       ...prevOwned,
       [upgrade.id]: currentLevel + 1,
     }));
+    addToast(`${nextTier.name} purchased!`);
   }
   
   // compute player stats based on upgrade bonuses
@@ -195,6 +198,17 @@ function App() {
     // remove fish from inventory and give respective pearls
     setInventory((prevInventory) => prevInventory.filter((f) => f.instanceId !== instanceId));
     setPearls((prevPearls) => prevPearls + sellPrice);
+    addToast(`+${sellPrice}🦪`);
+  }
+
+  // toast logic for purchases and sales
+  function addToast(message) {
+    const id = crypto.randomUUID();
+    setToasts((prevToasts) => [...prevToasts, { id, message }]);
+  }
+
+  function handleDismissToast(id) {
+    setToasts((prevToasts) => prevToasts.filter((toast) => toast.id !== id));
   }
 
   return (
@@ -205,6 +219,7 @@ function App() {
           {isInventoryFull && <p className="inventory-full-text">Your inventory is full!</p>}
         </div>
         <CurrencyHUD pearls={pearls} />
+        <ToastContainer toasts={toasts} onDismiss={handleDismissToast} />
       </div>
  
       <div className="game-area">
