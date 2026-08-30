@@ -14,6 +14,7 @@ import { pickWeighted } from './utils/pickWeighted';
 import { getSellPrice } from './utils/getSellPrice';
 import InventoryPanel from './components/InventoryPanel';
 import { getTierCost } from './utils/getTierCost';
+import BestiaryPanel from './components/BestiaryPanel';
 
 function App() {
   const baseStats = {
@@ -38,6 +39,7 @@ function App() {
   const [ownedUpgrades, setOwnedUpgrades] = useState({}); // { lineId: levelOwned }
   const [currentFish, setCurrentFish] = useState(null); // { species, modifier } | null
   const [inventory, setInventory] = useState([]);
+  const [bestiary, setBestiary] = useState({}) // key: `${speciesId}-${modifierId}` => catch count
 
   // handle the "Cast Line" button click
   function handleCast() {
@@ -51,6 +53,7 @@ function App() {
   function handleFishingResult(outcome) {
     const { species, modifier } = currentFish;
 
+    // add new fish to inventory
     if (outcome === 'caught') {
       const newFish = {
         instanceId: crypto.randomUUID(),
@@ -62,6 +65,7 @@ function App() {
 
     const catchName = modifier.name ? `${modifier.name} ${species.name}` : species.name;
 
+    // pass fishing result data to result popup
     setResultData({
       outcome,
       catchName,
@@ -69,6 +73,13 @@ function App() {
       gradient: modifier.gradient,
     });
     setGamePhase('result');
+
+    // add new fish to bestiary
+    const bestiaryKey = `${species.id}-${modifier.id}`;
+    setBestiary((prevBestiary) => ({
+      ...prevBestiary,
+      [bestiaryKey]: (prevBestiary[bestiaryKey] || 0) +1,
+    }));
   }
 
   // handle the dismissal of the result popup
@@ -212,6 +223,7 @@ function App() {
       <ButtonDock>
         <DockButton icon="🛒" label="Shop" onClick={() => setActivePanel('shop')} disabled={gamePhase !== 'idle'}/>
         <DockButton icon="💼" label="Inventory" onClick={() => setActivePanel('inventory')} disabled={gamePhase !== 'idle'}/>
+        <DockButton icon="🧾" label="Bestiary" onClick={() => setActivePanel('bestiary')} disabled={gamePhase !== 'idle'}/>
       </ButtonDock>
 
       {activePanel === 'shop' && (
@@ -231,6 +243,10 @@ function App() {
           sellMultiplier={playerStats.sellMultiplier}
           onSell={handleSellFish}
         />
+      )}
+
+      {activePanel === 'bestiary' && (
+        <BestiaryPanel onClose={() => setActivePanel(null)} bestiary={bestiary} />
       )}
 
       {gamePhase === 'result' && resultData && (

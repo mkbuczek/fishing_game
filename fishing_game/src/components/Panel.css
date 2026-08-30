@@ -79,6 +79,10 @@
     width: 400px;
 }
 
+.panel-bestiary {
+    width: 950px;
+}
+
 @keyframes panel-overlay-fade-in {
     from { opacity: 0; }
     to { opacity: 1; }
