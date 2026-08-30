@@ -11,12 +11,25 @@ export default function ResultPopup({ outcome, catchName, icon, gradient, onDism
   }, [onDismiss, autoDismissMs]);
 
   const [canDismiss, setCanDismiss] = useState(false);
+
   useEffect(() => {
     const graceTimer = setTimeout(() => {
         setCanDismiss(true);
     }, 500); // 500 ms grace period before allowing dismissal
     return () => clearTimeout(graceTimer);
   }, []);
+
+  useEffect(() => {
+    function handleKeyDown(event) {
+      if (event.code === 'Space' && canDismiss) {
+        event.preventDefault();
+        onDismiss();
+      }
+    }
+
+    window.addEventListener('keydown', handleKeyDown);
+    return () => window.removeEventListener('keydown', handleKeyDown);
+  }, [canDismiss, onDismiss]);
  
   function handleOverlayClick() {
     if (canDismiss) {
@@ -45,7 +58,7 @@ export default function ResultPopup({ outcome, catchName, icon, gradient, onDism
             'It got away...'
           )}
         </p>
-        <p className="result-popup-hint">click to continue</p>
+        <p className="result-popup-hint">click or space to continue</p>
       </div>
     </div>
   );

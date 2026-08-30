@@ -41,6 +41,11 @@ function App() {
   const [inventory, setInventory] = useState([]);
   const [bestiary, setBestiary] = useState({}) // key: `${speciesId}-${modifierId}` => catch count
 
+  // update player stats
+  const playerStats = computePlayerStats(ownedUpgrades);
+  // check if inventory is full
+  const isInventoryFull = inventory.length === playerStats.inventoryCapacity;
+
   // handle the "Cast Line" button click
   function handleCast() {
     const species = pickWeighted(fish);
@@ -124,9 +129,6 @@ function App() {
     return stats;
   }
 
-  // update player stats
-  const playerStats = computePlayerStats(ownedUpgrades);
-
   // handle fish bite delay after cast
   useEffect(() => {
     if (gamePhase !== 'waiting') return;
@@ -166,6 +168,21 @@ function App() {
     };
   }, [gamePhase]);
 
+  // handle pressing space to cast
+  useEffect(() => {
+    if (gamePhase !== 'idle' || activePanel !== null) return;
+
+    function handleCastKey(event) {
+      if (event.code === 'Space' && !isInventoryFull) {
+        event.preventDefault();
+        handleCast();
+      }
+    }
+
+    window.addEventListener('keydown', handleCastKey);
+    return () => window.removeEventListener('keydown', handleCastKey);
+  }, [gamePhase, activePanel, isInventoryFull]);
+
   // handle selling fish from the inventory
   function handleSellFish(instanceId) {
     const item = inventory.find((f) => f.instanceId === instanceId);
@@ -179,9 +196,6 @@ function App() {
     setInventory((prevInventory) => prevInventory.filter((f) => f.instanceId !== instanceId));
     setPearls((prevPearls) => prevPearls + sellPrice);
   }
-
-  // check if inventory is full
-  const isInventoryFull = inventory.length === playerStats.inventoryCapacity;
 
   return (
     <div className="app">
