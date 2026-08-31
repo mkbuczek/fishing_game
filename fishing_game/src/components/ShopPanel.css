@@ -26,6 +26,7 @@
     font-family: system-ui, sans-serif;
     font-size: 1rem;
     cursor: pointer;
+    transition: transform 0.1s ease
 }
 
 .shop-item-name {

@@ -16,6 +16,8 @@ import InventoryPanel from './components/InventoryPanel';
 import { getTierCost } from './utils/getTierCost';
 import BestiaryPanel from './components/BestiaryPanel';
 import ToastContainer from './components/ToastContainer';
+import SettingsButton from './components/SettingsButton';
+import SettingsPanel from './components/SettingsPanel';
 
 function App() {
   const baseStats = {
@@ -35,12 +37,12 @@ function App() {
 
   const [gamePhase, setGamePhase] = useState('idle'); // 'idle' | 'waiting' | 'fishing' | 'result'
   const [resultData, setResultData] = useState(null); // { outcome, reward } | null
-  const [pearls, setPearls] = useState(10000); // player's current pearl count
+  const [pearls, setPearls] = useState(() => loadSave()?.pearls ?? 0); // player's current pearl count
   const [activePanel, setActivePanel] = useState(null); // null | 'shop'
-  const [ownedUpgrades, setOwnedUpgrades] = useState({}); // { lineId: levelOwned }
+  const [ownedUpgrades, setOwnedUpgrades] = useState(() => loadSave()?.ownedUpgrades ?? {}); // { lineId: levelOwned }
   const [currentFish, setCurrentFish] = useState(null); // { species, modifier } | null
-  const [inventory, setInventory] = useState([]);
-  const [bestiary, setBestiary] = useState({}) // key: `${speciesId}-${modifierId}` => catch count
+  const [inventory, setInventory] = useState(() => loadSave()?.inventory ?? []);
+  const [bestiary, setBestiary] = useState(() => loadSave()?.bestiary ?? {}); // key: `${speciesId}-${modifierId}` => catch count
   const [toasts, setToasts] = useState([]);
 
   // update player stats
@@ -68,6 +70,13 @@ function App() {
         modifierId: modifier.id,
       };
       setInventory((prevInventory) => [...prevInventory, newFish]);
+
+      // add new fish to bestiary
+      const bestiaryKey = `${species.id}-${modifier.id}`;
+      setBestiary((prevBestiary) => ({
+        ...prevBestiary,
+        [bestiaryKey]: (prevBestiary[bestiaryKey] || 0) +1,
+      }));
     }
 
     const catchName = modifier.name ? `${modifier.name} ${species.name}` : species.name;
@@ -80,13 +89,6 @@ function App() {
       gradient: modifier.gradient,
     });
     setGamePhase('result');
-
-    // add new fish to bestiary
-    const bestiaryKey = `${species.id}-${modifier.id}`;
-    setBestiary((prevBestiary) => ({
-      ...prevBestiary,
-      [bestiaryKey]: (prevBestiary[bestiaryKey] || 0) +1,
-    }));
   }
 
   // handle the dismissal of the result popup
@@ -186,6 +188,30 @@ function App() {
     return () => window.removeEventListener('keydown', handleCastKey);
   }, [gamePhase, activePanel, isInventoryFull]);
 
+  // --- SAVE LOGIC ---
+  // save whenever the state of data changes
+  useEffect(() => {
+    const saveData = { pearls, ownedUpgrades, inventory, bestiary };
+    localStorage.setItem('fishingGameSave', JSON.stringify(saveData));
+  }, [pearls, ownedUpgrades, inventory, bestiary]);
+
+  function loadSave() {
+    try {
+      const raw = localStorage.getItem('fishingGameSave');
+      return raw ? JSON.parse(raw) : null;
+    } catch {
+      return null; // fallback to null
+    }
+  }
+
+  function handleResetSave() {
+    localStorage.removeItem('fishingGameSave');
+    setPearls(0);
+    setOwnedUpgrades({});
+    setInventory([]);
+    setBestiary({});
+  }
+
   // handle selling fish from the inventory
   function handleSellFish(instanceId) {
     const item = inventory.find((f) => f.instanceId === instanceId);
@@ -220,6 +246,7 @@ function App() {
         </div>
         <CurrencyHUD pearls={pearls} />
         <ToastContainer toasts={toasts} onDismiss={handleDismissToast} />
+        <SettingsButton onClick={() => setActivePanel('settings')} />
       </div>
  
       <div className="game-area">
@@ -276,6 +303,10 @@ function App() {
 
       {activePanel === 'bestiary' && (
         <BestiaryPanel onClose={() => setActivePanel(null)} bestiary={bestiary} />
+      )}
+
+      {activePanel === 'settings' && (
+        <SettingsPanel onClose={() => setActivePanel(null)} onReset={handleResetSave} />
       )}
 
       {gamePhase === 'result' && resultData && (
