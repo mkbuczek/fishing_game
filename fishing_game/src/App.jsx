@@ -23,7 +23,7 @@ import AchievementPanel from './components/AchievementPanel';
 
 function App() {
   const baseStats = {
-    startingProgress: 40, // % of starting progress value
+    startingProgress: 50, // % of starting progress value
     barHeight: 15,   // % of track height
     upSpeed: 0.75, // rate at which the catch bar moves up
     downSpeed: 0.5, // rate at which the catch bar moves down

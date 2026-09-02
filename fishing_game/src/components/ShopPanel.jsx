@@ -1,7 +1,15 @@
+import { useState } from 'react';
 import Panel from './Panel';
 import upgrades from '../data/upgrades';
 import './ShopPanel.css';
 import { getTierCost } from '../utils/getTierCost';
+
+const categoryLabels = {
+    stat: 'Stats',
+    fish: 'Fish',
+    inventory: 'Inventory',
+    gold: 'Gold',
+}
  
 function getMissingRequirementNames(requires, ownedUpgrades) {
     return requires
@@ -14,10 +22,28 @@ function getMissingRequirementNames(requires, ownedUpgrades) {
 }
 
 export default function ShopPanel({ onClose, pearls, ownedUpgrades, onPurchase }) {
+    const availableCategories = [...new Set(upgrades.map((u) => u.category))];
+    const [activeCategory, setActiveCategory] = useState(availableCategories[0]);
+    const visibleUpgrades = upgrades.filter((u) => u.category === activeCategory);
+
     return (
         <Panel title="Shop" onClose={onClose} className="panel-shop">
+            {availableCategories.length > 1 && (
+                <div className="shop-tabs">
+                    {availableCategories.map((category) => (
+                        <button
+                            key={category}
+                            className={activeCategory === category ? 'shop-tab shop-tab-active' : 'shop-tab'}
+                            onClick={() => setActiveCategory(category)}
+                        >
+                            {categoryLabels[category] || category}
+                        </button>
+                    ))}
+                </div>
+            )}
+
             <div className="shop-list">
-                {upgrades.map((upgrade) => {
+                {visibleUpgrades.map((upgrade) => {
                     const currentLevel = ownedUpgrades[upgrade.id] || 0;
                     const isMaxed = currentLevel >= upgrade.tiers.length;
 

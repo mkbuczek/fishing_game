@@ -78,7 +78,7 @@ const upgrades = [
         id: "luck",
         category: "stat",
         statKey: "luck",
-        tooltip: "Increases luck (not implemented yet)",
+        tooltip: "Increases luck",
         baseCost: 100,
         costGrowth: 1.75,
         tiers: [
