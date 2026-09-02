@@ -1,0 +1,61 @@
+.achievement-grid {
+    display: grid;
+    grid-template-columns: repeat(5, 1fr);
+    gap: 10px;
+}
+
+.achievement-entry {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 6px;
+}
+
+.achievement-entry-square {
+    width: 100px;
+    aspect-ratio: 1 / 1;
+    min-height: 0;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: space-between;
+    gap: 2px;
+    background: hsla(0, 0%, 0%, 0.25);
+    border: 3px solid rgba(232, 176, 75, 0.5);
+    border-radius: 10px;
+    padding: 8px;
+    overflow: hidden;
+}
+
+.achievement-entry-locked .achievement-entry-square {
+    opacity: 0.5;
+    filter: grayscale(60%);
+}
+
+.achievement-entry-icon {
+    font-size: 2rem;
+}
+
+.achievement-entry-name {
+    height: 26px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    line-height: 1.05;
+    font-size: 0.7rem;
+    font-weight: bold;
+    text-align: center;
+    word-break: break-word;
+}
+
+.achievement-entry-reward {
+    height: 18px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 0.8rem;
+    font-weight: bold;
+    color: hsl(0, 4%, 80%);
+    text-align: center;
+    text-shadow: 1px 1px 0px hsla(0, 0%, 0%, 0.9);
+}

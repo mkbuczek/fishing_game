@@ -88,6 +88,10 @@
     width: 320px;
 }
 
+.panel-achievement {
+    width: 600px;
+}
+
 @keyframes panel-overlay-fade-in {
     from { opacity: 0; }
     to { opacity: 1; }
