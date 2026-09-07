@@ -41,7 +41,7 @@ function App() {
   const savedData = loadSave();
 
   // load achievements
-  const { unlockedAchievements, goldenPearls, processAchievementUnlocks, resetAchievements } =
+  const { unlockedAchievements, goldenPearls, processAchievementUnlocks, resetAchievements, spendGoldenPearls } =
     useAchievements(
       savedData?.unlockedAchievements ?? [],
       savedData?.goldenPearls ?? 0,
@@ -127,7 +127,10 @@ function App() {
 
     const nextTier = upgrade.tiers[currentLevel];
     const cost = getTierCost(upgrade, currentLevel);
-    if (pearls < cost) return; // return if not enough money
+
+    const currency = upgrade.currency ?? "pearls"; // default currency to pearls
+    const balance = currency === "goldenPearls" ? goldenPearls : pearls; 
+    if (balance < cost) return; // return if not enough money
 
     const meetsRequirements = nextTier.requires.every(
       (req) => (ownedUpgrades[req.id] || 0) >= req.level
@@ -135,7 +138,13 @@ function App() {
     if (!meetsRequirements) return; // return if prereqs are not met
 
     //else, buy the upgrade
-    setPearls((prevPearls) => prevPearls - cost);
+    if (currency === "goldenPearls") {
+      spendGoldenPearls(cost);
+    } else {
+      setPearls((prevPearls) => prevPearls - cost);
+    }
+
+    // add upgrade to ownedUpgrades
     setOwnedUpgrades((prevOwned) => ({
       ...prevOwned,
       [upgrade.id]: currentLevel + 1,
@@ -330,6 +339,7 @@ function App() {
         <ShopPanel 
           onClose={() => setActivePanel(null)}
           pearls={pearls}
+          goldenPearls={goldenPearls}
           ownedUpgrades={ownedUpgrades}
           onPurchase={handlePurchase}
         />

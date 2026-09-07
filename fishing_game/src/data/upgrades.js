@@ -4,6 +4,7 @@ const upgrades = [
         category: "stat",
         statKey: "fillRate",
         tooltip: "Increases how fast the progress bar fills",
+        currency: "pearls",
         baseCost: 50,
         costGrowth: 1.7,
         tiers: [
@@ -19,6 +20,7 @@ const upgrades = [
         category: "stat",
         statKey: "barHeight",
         tooltip: "Increases the catch bar hitbox",
+        currency: "pearls",
         baseCost: 20,
         costGrowth: 1.25,
         tiers: [
@@ -34,6 +36,7 @@ const upgrades = [
         category: "stat",
         statKey: "biteExponent",
         tooltip: "Makes fish bite quicker",
+        currency: "pearls",
         baseCost: 25,
         costGrowth: 1.55,
         tiers: [
@@ -49,6 +52,7 @@ const upgrades = [
         category: "stat",
         statKey: "sellMultiplier",
         tooltip: "Increases fish sell price",
+        currency: "pearls",
         baseCost: 50,
         costGrowth: 1.6,
         tiers: [
@@ -64,6 +68,7 @@ const upgrades = [
         category: "stat",
         statKey: "inventoryCapacity",
         tooltip: "Increases inventory capacity",
+        currency: "pearls",
         baseCost: 15,
         costGrowth: 1.2,
         tiers: [
@@ -79,6 +84,7 @@ const upgrades = [
         category: "stat",
         statKey: "luck",
         tooltip: "Increases luck",
+        currency: "pearls",
         baseCost: 100,
         costGrowth: 1.75,
         tiers: [
@@ -87,6 +93,23 @@ const upgrades = [
             { name: "Golden Horseshoe", bonus: 1, requires: [{ id: 'quicker-bite', level: 3}] },
             { name: "Lucky Shorts", bonus: 1, requires: [] },
             { name: "Rabbit's Foot", bonus: 1, requires: [] },
+        ],
+    },
+
+    {
+        id: "auto-fisher",
+        category: "auto",
+        statKey: "",
+        tooltip: "Fishes for you automatically",
+        currency: "goldenPearls",
+        baseCost: 1,
+        costGrowth: 1.75,
+        tiers: [
+            { name: "Auto-Fisher", bonus: 1, requires: [] },
+            { name: "Auto-Fisher II", bonus: 1, requires: [] },
+            { name: "Auto-Fisher III", bonus: 1, requires: []},
+            { name: "Auto-Fisher IV", bonus: 1, requires: [] },
+            { name: "Auto-Fisher V", bonus: 1, requires: [] },
         ],
     },
 ];

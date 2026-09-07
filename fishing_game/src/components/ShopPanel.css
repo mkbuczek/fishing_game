@@ -25,8 +25,9 @@
     color: #f5efe0;
     font-family: system-ui, sans-serif;
     font-size: 1rem;
+    box-shadow: 0 2px 3px hsla(0, 0%, 0%, 0.35);
     cursor: pointer;
-    transition: transform 0.1s ease
+    transition: transform 0.1s ease, box-shadow 0.1s ease;
 }
 
 .shop-item-name {
@@ -36,6 +37,7 @@
 
 .shop-item:hover {
     filter: brightness(1.05);
+    box-shadow: 0 4px 6px hsla(0, 0%, 0%, 0.4);
     transform: translateY(-1px);
 }
 
@@ -67,6 +69,7 @@
     text-align: left;
     font-style: italic;
     color: hsl(214, 95%, 62%);
+    text-shadow: 2px 2px 2px hsla(0, 0%, 0%, 0.9);
     white-space: normal;
     overflow-wrap: break-word;
 }
@@ -130,22 +133,29 @@
 
 .shop-tabs {
     display: flex;
-    gap: 2px;
-    margin-bottom: 10px;
+    justify-content: center;
+    gap: 4px;
+    padding: 10px;
+    background: linear-gradient(180deg, #5c3f29, #2e1f14);
+    border-bottom: 2px solid rgba(232, 176, 75, 0.4);
     flex-wrap: wrap;
+    width: 100%;
 }
 
 .shop-tab {
+    justify-content: center;
+    text-align: center;
     font-family: system-ui, sans-serif;
     font-size: 0.75rem;
     font-weight: bold;
-    text-align: center;
-    width: 90px;
+    width: 100px;
     padding: 6px 12px;
     background: hsla(0, 0%, 0%, 0.25);
     border: 2px solid rgba(232, 176, 75, 0.4);
     border-radius: 8px;
     color: #f5efe0;
+    box-shadow: 2px 2px 4px hsla(0, 0%, 0%, 0.9);
+    text-shadow: 2px 2px 4px hsla(0, 0%, 0%, 0.9);
     cursor: pointer;
     transition: transform 0.1s ease;
 }

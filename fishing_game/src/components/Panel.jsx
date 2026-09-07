@@ -1,6 +1,6 @@
 import './Panel.css';
 
-export default function Panel({ title, onClose, children, className = '', sideInfo }) {
+export default function Panel({ title, onClose, children, className = '', sideInfo, headerExtra }) {
   return (
     <div className="panel-overlay" onClick={onClose}>
       <div className={`panel ${className}`} onClick={(event) => event.stopPropagation()}>
@@ -11,6 +11,7 @@ export default function Panel({ title, onClose, children, className = '', sideIn
             ×
           </button>
         </div>
+        {headerExtra && <div className="panel-header-extra">{headerExtra}</div>}
         <div className="panel-content">
           {children}
         </div>

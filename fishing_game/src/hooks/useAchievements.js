@@ -36,5 +36,9 @@ export function useAchievements(initialUnlocked, initialGoldenPearls, onUnlock) 
     setGoldenPearls(0);
   }
 
-  return { unlockedAchievements, goldenPearls, processAchievementUnlocks, resetAchievements };
+  function spendGoldenPearls(amount) {
+    setGoldenPearls((prev) => Math.max(0, prev - amount));
+  } 
+
+  return { unlockedAchievements, goldenPearls, processAchievementUnlocks, resetAchievements, spendGoldenPearls };
 }

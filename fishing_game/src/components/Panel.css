@@ -45,6 +45,27 @@
     display: flex;
     flex-direction: column;
     align-items: center;
+    scrollbar-width: thin;
+    scrollbar-color: var(--gold) var(--wood-dark);
+    scrollbar-gutter: stable both-edges;
+}
+
+.panel-content::-webkit-scrollbar {
+    width: 10px;
+}
+
+.panel-content::-webkit-scrollbar-track {
+    background: var(--wood-dark);
+}
+
+.panel-content::-webkit-scrollbar-thumb {
+    background: var(--gold);
+    border-radius: 8px;
+    border: 2px solid var(--wood-dark);
+}
+
+.panel-content::-webkit-scrollbar-thumb:hover {
+    background: #f5c569;
 }
 
 .panel-header {
@@ -136,6 +157,7 @@
 
 .panel-shop {
     width: 400px;
+    height: 590px;
 }
 
 .panel-bestiary {

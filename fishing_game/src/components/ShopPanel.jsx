@@ -3,13 +3,17 @@ import Panel from './Panel';
 import upgrades from '../data/upgrades';
 import './ShopPanel.css';
 import { getTierCost } from '../utils/getTierCost';
+import { getUpgradeLabel } from '../utils/getUpgradeLabel';
 
 const categoryLabels = {
     stat: 'Stats',
-    fish: 'Fish',
-    inventory: 'Inventory',
-    gold: 'Gold',
+    auto: 'Auto',
 }
+
+const currencyIcons = {
+    pearls: '🦪',
+    goldenPearls: '🪙',
+};
  
 function getMissingRequirementNames(requires, ownedUpgrades) {
     return requires
@@ -21,26 +25,32 @@ function getMissingRequirementNames(requires, ownedUpgrades) {
         .join(', ');
 }
 
-export default function ShopPanel({ onClose, pearls, ownedUpgrades, onPurchase }) {
+export default function ShopPanel({ onClose, pearls, goldenPearls, ownedUpgrades, onPurchase }) {
     const availableCategories = [...new Set(upgrades.map((u) => u.category))];
     const [activeCategory, setActiveCategory] = useState(availableCategories[0]);
     const visibleUpgrades = upgrades.filter((u) => u.category === activeCategory);
 
     return (
-        <Panel title="Shop" onClose={onClose} className="panel-shop">
-            {availableCategories.length > 1 && (
-                <div className="shop-tabs">
-                    {availableCategories.map((category) => (
-                        <button
-                            key={category}
-                            className={activeCategory === category ? 'shop-tab shop-tab-active' : 'shop-tab'}
-                            onClick={() => setActiveCategory(category)}
-                        >
-                            {categoryLabels[category] || category}
-                        </button>
-                    ))}
-                </div>
-            )}
+        <Panel
+            title="Shop"
+            onClose={onClose}
+            className="panel-shop"
+            headerExtra={
+                availableCategories.length > 1 && (
+                    <div className="shop-tabs">
+                        {availableCategories.map((category) => (
+                            <button
+                                key={category}
+                                className={activeCategory === category ? 'shop-tab shop-tab-active' : 'shop-tab'}
+                                onClick={() => setActiveCategory(category)}
+                            >
+                                {categoryLabels[category] || category}
+                            </button>
+                        ))}
+                    </div>
+                )
+            }
+        >
 
             <div className="shop-list">
                 {visibleUpgrades.map((upgrade) => {
@@ -52,7 +62,7 @@ export default function ShopPanel({ onClose, pearls, ownedUpgrades, onPurchase }
                         return (
                             <div key={upgrade.id} className="shop-item shop-item-maxed">
                                 <div className="shop-item-row">
-                                    <span className="shop-item-name">{`Tier ${upgrade.tiers.length}: ${lastTier.name}`}</span>
+                                    <span className="shop-item-name">{getUpgradeLabel(upgrade, currentLevel, lastTier.name)}</span>
                                     <span className="shop-item-cost">MAXED</span>
                                 </div>
                             </div>
@@ -63,7 +73,11 @@ export default function ShopPanel({ onClose, pearls, ownedUpgrades, onPurchase }
                     const cost = getTierCost(upgrade, currentLevel);
                     const missingNames = getMissingRequirementNames(nextTier.requires, ownedUpgrades);
                     const isLocked = missingNames.length > 0;
-                    const canAfford = pearls >= cost && !isLocked;
+
+                    const currency = upgrade.currency ?? "pearls"; // default currency to pearls
+                    const balance = currency === "goldenPearls" ? goldenPearls : pearls;
+                    const canAfford = balance >= cost && !isLocked;
+
 
                     return (
                         <button
@@ -73,8 +87,8 @@ export default function ShopPanel({ onClose, pearls, ownedUpgrades, onPurchase }
                             onClick={() => onPurchase(upgrade)}
                         >
                             <div className="shop-item-row">
-                                <span className="shop-item-name">{isLocked ? '???' : `Tier ${currentLevel +1}: ${nextTier.name}`}</span>
-                                <span className="shop-item-cost">{isLocked ? '' : `${cost}🦪`}</span>
+                                <span className="shop-item-name">{isLocked ? '???' : getUpgradeLabel(upgrade, currentLevel, nextTier.name)}</span>
+                                <span className="shop-item-cost">{isLocked ? '' : `${cost}${currencyIcons[currency] || '🦪'}`}</span>
                             </div>
                             <span className="shop-item-tooltip">
                                 {isLocked ? `Requires ${missingNames}!` : upgrade.tooltip}
