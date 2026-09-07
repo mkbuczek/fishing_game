@@ -1,0 +1,27 @@
+.settings-button {
+  position: fixed;
+  top: 10px;
+  left: 10px;
+  width: 50px;
+  height: 50px;
+  border-radius: 10px;
+  background: linear-gradient(180deg, #6b4a30, #4a3220);
+  border: 2px solid #e8b04b;
+  color: #f5efe0;
+  font-size: 1.7rem;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  box-shadow: 0 4px 12px hsla(0, 0%, 0%, 0.35);
+  transition: transform 0.1s ease, box-shadow 0.1s ease;
+}
+ 
+.settings-button:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 6px 16px hsla(0, 0%, 0%, 0.4);
+}
+ 
+.settings-button:active {
+  transform: translateY(1px);
+}

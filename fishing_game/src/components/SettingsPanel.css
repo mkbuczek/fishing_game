@@ -1,0 +1,27 @@
+.settings-reset-button {
+    width: 100%;
+    font-family: system-ui, sans-serif;
+    font-size: 0.9rem;
+    font-weight: 600;
+    padding: 10px 16px;
+    background: linear-gradient(180deg, #e4504a, #5e1401);
+    border: 2px solid #4d0202;
+    border-radius: 8px;
+    color: #f5efe0;
+    cursor: pointer;
+    text-shadow: 2px 2px 2px hsla(0, 0%, 0%, 0.9);
+    transition: transform 0.1s ease
+}
+
+.settings-reset-button:hover {
+    filter: brightness(1.1);
+    transform: translateY(-1px);
+}
+
+.settings-reset-warning {
+    margin-top: 10px;
+    font-size: 0.8rem;
+    color: #fc9696;
+    text-align: center;
+    text-shadow: 2px 2px 2px hsla(0, 0%, 0%, 0.9);
+}

@@ -16,10 +16,14 @@ import InventoryPanel from './components/InventoryPanel';
 import { getTierCost } from './utils/getTierCost';
 import BestiaryPanel from './components/BestiaryPanel';
 import ToastContainer from './components/ToastContainer';
+import SettingsButton from './components/SettingsButton';
+import SettingsPanel from './components/SettingsPanel';
+import { useAchievements } from './hooks/useAchievements';
+import AchievementPanel from './components/AchievementPanel';
 
 function App() {
   const baseStats = {
-    startingProgress: 40, // % of starting progress value
+    startingProgress: 50, // % of starting progress value
     barHeight: 15,   // % of track height
     upSpeed: 0.75, // rate at which the catch bar moves up
     downSpeed: 0.5, // rate at which the catch bar moves down
@@ -33,15 +37,28 @@ function App() {
     inventoryCapacity: 5 // how many fish can be stored in the inventory
   }
 
+  // load save data
+  const savedData = loadSave();
+
+  // load achievements
+  const { unlockedAchievements, goldenPearls, processAchievementUnlocks, resetAchievements, spendGoldenPearls } =
+    useAchievements(
+      savedData?.unlockedAchievements ?? [],
+      savedData?.goldenPearls ?? 0,
+      (achievement) => addToast(`🏆 ${achievement.name} unlocked!`)
+    );
+
   const [gamePhase, setGamePhase] = useState('idle'); // 'idle' | 'waiting' | 'fishing' | 'result'
   const [resultData, setResultData] = useState(null); // { outcome, reward } | null
-  const [pearls, setPearls] = useState(10000); // player's current pearl count
+  const [pearls, setPearls] = useState(() => loadSave()?.pearls ?? 0); // player's current pearl count
   const [activePanel, setActivePanel] = useState(null); // null | 'shop'
-  const [ownedUpgrades, setOwnedUpgrades] = useState({}); // { lineId: levelOwned }
+  const [ownedUpgrades, setOwnedUpgrades] = useState(() => loadSave()?.ownedUpgrades ?? {}); // { lineId: levelOwned }
   const [currentFish, setCurrentFish] = useState(null); // { species, modifier } | null
-  const [inventory, setInventory] = useState([]);
-  const [bestiary, setBestiary] = useState({}) // key: `${speciesId}-${modifierId}` => catch count
+  const [inventory, setInventory] = useState(() => loadSave()?.inventory ?? []);
+  const [bestiary, setBestiary] = useState(() => loadSave()?.bestiary ?? {}); // key: `${speciesId}-${modifierId}` => catch count
   const [toasts, setToasts] = useState([]);
+  const [totalCatches, setTotalCatches] = useState(() => loadSave()?.totalCatches ?? 0);
+  const [totalPearlsEarned, setTotalPearlsEarned] = useState(() => loadSave()?.totalPearlsEarned ?? 0);
 
   // update player stats
   const playerStats = computePlayerStats(ownedUpgrades);
@@ -68,6 +85,21 @@ function App() {
         modifierId: modifier.id,
       };
       setInventory((prevInventory) => [...prevInventory, newFish]);
+
+      // add new fish to bestiary
+      const bestiaryKey = `${species.id}-${modifier.id}`;
+      const updatedBestiary = {
+        ...bestiary,
+        [bestiaryKey]: (bestiary[bestiaryKey] || 0) + 1,
+      };
+
+      // update running totals
+      const updatedTotalCatches = totalCatches + 1;
+      setTotalCatches(updatedTotalCatches);
+      setBestiary(updatedBestiary);
+
+      // check for achievements
+      processAchievementUnlocks({ bestiary: updatedBestiary, totalCatches: updatedTotalCatches, totalPearlsEarned });
     }
 
     const catchName = modifier.name ? `${modifier.name} ${species.name}` : species.name;
@@ -80,13 +112,6 @@ function App() {
       gradient: modifier.gradient,
     });
     setGamePhase('result');
-
-    // add new fish to bestiary
-    const bestiaryKey = `${species.id}-${modifier.id}`;
-    setBestiary((prevBestiary) => ({
-      ...prevBestiary,
-      [bestiaryKey]: (prevBestiary[bestiaryKey] || 0) +1,
-    }));
   }
 
   // handle the dismissal of the result popup
@@ -102,7 +127,10 @@ function App() {
 
     const nextTier = upgrade.tiers[currentLevel];
     const cost = getTierCost(upgrade, currentLevel);
-    if (pearls < cost) return; // return if not enough money
+
+    const currency = upgrade.currency ?? "pearls"; // default currency to pearls
+    const balance = currency === "goldenPearls" ? goldenPearls : pearls; 
+    if (balance < cost) return; // return if not enough money
 
     const meetsRequirements = nextTier.requires.every(
       (req) => (ownedUpgrades[req.id] || 0) >= req.level
@@ -110,7 +138,13 @@ function App() {
     if (!meetsRequirements) return; // return if prereqs are not met
 
     //else, buy the upgrade
-    setPearls((prevPearls) => prevPearls - cost);
+    if (currency === "goldenPearls") {
+      spendGoldenPearls(cost);
+    } else {
+      setPearls((prevPearls) => prevPearls - cost);
+    }
+
+    // add upgrade to ownedUpgrades
     setOwnedUpgrades((prevOwned) => ({
       ...prevOwned,
       [upgrade.id]: currentLevel + 1,
@@ -186,6 +220,43 @@ function App() {
     return () => window.removeEventListener('keydown', handleCastKey);
   }, [gamePhase, activePanel, isInventoryFull]);
 
+  // --- SAVE LOGIC ---
+  // save whenever the state of data changes
+  useEffect(() => {
+    const saveData = { 
+      pearls,
+      ownedUpgrades,
+      inventory,
+      bestiary,
+      totalCatches,
+      totalPearlsEarned,
+      unlockedAchievements,
+      goldenPearls,
+    };
+
+    localStorage.setItem('fishingGameSave', JSON.stringify(saveData));
+  }, [pearls, ownedUpgrades, inventory, bestiary, totalCatches, totalPearlsEarned, unlockedAchievements, goldenPearls]);
+
+  function loadSave() {
+    try {
+      const raw = localStorage.getItem('fishingGameSave');
+      return raw ? JSON.parse(raw) : null;
+    } catch {
+      return null; // fallback to null
+    }
+  }
+
+  function handleResetSave() {
+    localStorage.removeItem('fishingGameSave');
+    setPearls(0);
+    setOwnedUpgrades({});
+    setInventory([]);
+    setBestiary({});
+    setTotalCatches(0);
+    setTotalPearlsEarned(0);
+    resetAchievements();
+  }
+
   // handle selling fish from the inventory
   function handleSellFish(instanceId) {
     const item = inventory.find((f) => f.instanceId === instanceId);
@@ -199,6 +270,13 @@ function App() {
     setInventory((prevInventory) => prevInventory.filter((f) => f.instanceId !== instanceId));
     setPearls((prevPearls) => prevPearls + sellPrice);
     addToast(`+${sellPrice}🦪`);
+
+    // update running total
+    const updatedTotalPearlsEarned = totalPearlsEarned + sellPrice;
+    setTotalPearlsEarned(updatedTotalPearlsEarned);
+
+    // check for achievements
+    processAchievementUnlocks({bestiary, totalCatches, totalPearlsEarned: updatedTotalPearlsEarned,});
   }
 
   // toast logic for purchases and sales
@@ -218,8 +296,9 @@ function App() {
           <CastButton onClick={handleCast} disabled={gamePhase !== 'idle' || isInventoryFull} />
           {isInventoryFull && <p className="inventory-full-text">Your inventory is full!</p>}
         </div>
-        <CurrencyHUD pearls={pearls} />
+        <CurrencyHUD pearls={pearls} goldenPearls={goldenPearls} />
         <ToastContainer toasts={toasts} onDismiss={handleDismissToast} />
+        <SettingsButton onClick={() => setActivePanel('settings')} />
       </div>
  
       <div className="game-area">
@@ -250,6 +329,7 @@ function App() {
       </div>
 
       <ButtonDock>
+        <DockButton icon="🏆" label="Achievements" onClick={() => setActivePanel('achievement')} disabled={gamePhase !== 'idle'}/>
         <DockButton icon="🛒" label="Shop" onClick={() => setActivePanel('shop')} disabled={gamePhase !== 'idle'}/>
         <DockButton icon="💼" label="Inventory" onClick={() => setActivePanel('inventory')} disabled={gamePhase !== 'idle'}/>
         <DockButton icon="🧾" label="Bestiary" onClick={() => setActivePanel('bestiary')} disabled={gamePhase !== 'idle'}/>
@@ -259,6 +339,7 @@ function App() {
         <ShopPanel 
           onClose={() => setActivePanel(null)}
           pearls={pearls}
+          goldenPearls={goldenPearls}
           ownedUpgrades={ownedUpgrades}
           onPurchase={handlePurchase}
         />
@@ -276,6 +357,14 @@ function App() {
 
       {activePanel === 'bestiary' && (
         <BestiaryPanel onClose={() => setActivePanel(null)} bestiary={bestiary} />
+      )}
+
+      {activePanel === 'settings' && (
+        <SettingsPanel onClose={() => setActivePanel(null)} onReset={handleResetSave} />
+      )}
+
+      {activePanel === 'achievement' && (
+        <AchievementPanel onClose={() => setActivePanel(null)} unlockedAchievements={unlockedAchievements} />
       )}
 
       {gamePhase === 'result' && resultData && (
