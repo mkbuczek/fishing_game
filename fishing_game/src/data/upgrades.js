@@ -100,7 +100,7 @@ const upgrades = [
         id: "auto-fisher",
         category: "auto",
         statKey: "",
-        tooltip: "Fishes for you automatically",
+        tooltip: "Fishes for you automatically (not implemented yet)",
         currency: "goldenPearls",
         baseCost: 1,
         costGrowth: 1.75,
