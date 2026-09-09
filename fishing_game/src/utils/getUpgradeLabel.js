@@ -4,7 +4,7 @@ export function getUpgradeLabel(upgrade, tierIndex, tierName, isMaxed) {
 
     if (currency === 'goldenPearls') {
         prependText = isMaxed ? "" : "Unlock";
-        return `${prependText} ${tierName}`; //goldenPearls
+        return `${prependText} ${tierName}`.trim(); //goldenPearls
     }
 
     const displayTier = isMaxed ? upgrade.tiers.length : tierIndex + 1;
