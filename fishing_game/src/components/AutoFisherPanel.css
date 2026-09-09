@@ -1,0 +1,44 @@
+.auto-fisher-toggle-row {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    width: 100%;
+    padding: 10px 4px;
+    text-shadow: 2px 2px 8px hsla(0, 0%, 0%, 0.9);
+}
+
+.auto-fisher-toggle-label {
+    font-weight: bold;
+    color: #f5efe0;
+}
+
+.auto-fisher-switch {
+    width: 52px;
+    height: 28px;
+    border-radius: 50px;
+    background: hsla(0, 0%, 0%, 0.3);
+    border: 2px solid rgba(232, 176, 75, 0.4);
+    position: relative;
+    cursor: pointer;
+    transition: background 0.15s ease, border-color 0.15s ease;
+}
+
+.auto-fisher-switch-knob {
+    position: absolute;
+    top: 2px;
+    left: 2px;
+    width: 20px;
+    height: 20px;
+    border-radius: 50%;
+    background: #f5efe0;
+    transition: transform 0.15s ease;
+}
+
+.auto-fisher-switch-on {
+    background: #0c7523;
+    border-color: #e8b04b;
+}
+
+.auto-fisher-switch-on .auto-fisher-switch-knob {
+    transform: translateX(24px);
+}

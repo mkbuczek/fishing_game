@@ -20,6 +20,11 @@ import SettingsButton from './components/SettingsButton';
 import SettingsPanel from './components/SettingsPanel';
 import { useAchievements } from './hooks/useAchievements';
 import AchievementPanel from './components/AchievementPanel';
+import { useAutoFisher } from './hooks/useAutoFisher';
+import { useAutoCatchHandler } from './hooks/useAutoCatchHandler';
+import { computePlayerStats } from './utils/computePlayerStats';
+import AutoFisherButton from './components/AutoFisherButton';
+import AutoFisherPanel from './components/AutoFisherPanel';
 
 function App() {
   const baseStats = {
@@ -59,11 +64,39 @@ function App() {
   const [toasts, setToasts] = useState([]);
   const [totalCatches, setTotalCatches] = useState(() => loadSave()?.totalCatches ?? 0);
   const [totalPearlsEarned, setTotalPearlsEarned] = useState(() => loadSave()?.totalPearlsEarned ?? 0);
+  const [isAutoFisherEnabled, setIsAutoFisherEnabled] = useState(() => loadSave()?.isAutoFisherEnabled ?? false);
+  const [isAutoSellEnabled, setIsAutoSellEnabled] = useState(() => loadSave()?.isAutoSellEnabled ?? false);
 
   // update player stats
-  const playerStats = computePlayerStats(ownedUpgrades);
+  const playerStats = computePlayerStats(baseStats, ownedUpgrades);
   // check if inventory is full
   const isInventoryFull = inventory.length === playerStats.inventoryCapacity;
+
+  const { handleAutoCatch } = useAutoCatchHandler({
+    isAutoSellEnabled,
+    bestiary,
+    setBestiary,
+    setInventory,
+    totalCatches,
+    setTotalCatches,
+    totalPearlsEarned,
+    setTotalPearlsEarned,
+    setPearls,
+    sellMultiplier: playerStats.sellMultiplier,
+    processAchievementUnlocks,
+    addToast,
+  });
+
+const { isPaused: isAutoFisherPaused } = useAutoFisher({
+    ownedUpgrades,
+    playerStats,
+    inventory,
+    capacity: playerStats.inventoryCapacity,
+    isEnabled: isAutoFisherEnabled,
+    isAutoSellEnabled,
+    onCatch: handleAutoCatch,
+    onInventoryFull: () => addToast('⚠️ Auto fisher paused... inventory full! ⚠️'),
+  });
 
   // handle the "Cast Line" button click
   function handleCast() {
@@ -151,20 +184,6 @@ function App() {
     }));
     addToast(`${nextTier.name} purchased!`);
   }
-  
-  // compute player stats based on upgrade bonuses
-  function computePlayerStats(ownedUpgrades) {
-    const stats = { ...baseStats }; // spread stats array
-
-    upgrades.forEach((upgrade) => {
-      const currentLevel = ownedUpgrades[upgrade.id] || 0;
-      for (let i = 0; i < currentLevel; i++) {
-        stats[upgrade.statKey] += upgrade.tiers[i].bonus;
-      }
-    });
-
-    return stats;
-  }
 
   // handle fish bite delay after cast
   useEffect(() => {
@@ -232,10 +251,12 @@ function App() {
       totalPearlsEarned,
       unlockedAchievements,
       goldenPearls,
+      isAutoFisherEnabled,
+      isAutoSellEnabled,
     };
 
     localStorage.setItem('fishingGameSave', JSON.stringify(saveData));
-  }, [pearls, ownedUpgrades, inventory, bestiary, totalCatches, totalPearlsEarned, unlockedAchievements, goldenPearls]);
+  }, [pearls, ownedUpgrades, inventory, bestiary, totalCatches, totalPearlsEarned, unlockedAchievements, goldenPearls, isAutoFisherEnabled, isAutoSellEnabled]);
 
   function loadSave() {
     try {
@@ -255,6 +276,8 @@ function App() {
     setTotalCatches(0);
     setTotalPearlsEarned(0);
     resetAchievements();
+    setIsAutoFisherEnabled(false);
+    setIsAutoSellEnabled(false);
   }
 
   // handle selling fish from the inventory
@@ -328,6 +351,10 @@ function App() {
          />}
       </div>
 
+      {(ownedUpgrades['auto-fisher'] || 0) > 0 && (
+        <AutoFisherButton onClick={() => setActivePanel('autoFisher')} disabled={gamePhase !== 'idle'} isPaused={isAutoFisherPaused} />
+      )}
+
       <ButtonDock>
         <DockButton icon="🏆" label="Achievements" onClick={() => setActivePanel('achievement')} disabled={gamePhase !== 'idle'}/>
         <DockButton icon="🛒" label="Shop" onClick={() => setActivePanel('shop')} disabled={gamePhase !== 'idle'}/>
@@ -365,6 +392,14 @@ function App() {
 
       {activePanel === 'achievement' && (
         <AchievementPanel onClose={() => setActivePanel(null)} unlockedAchievements={unlockedAchievements} />
+      )}
+
+      {activePanel === 'autoFisher' && (
+        <AutoFisherPanel
+          onClose={() => setActivePanel(null)}
+          isAutoFisherEnabled={isAutoFisherEnabled}
+          onToggleAutoFisher={() => setIsAutoFisherEnabled((prev) => !prev)}
+        />
       )}
 
       {gamePhase === 'result' && resultData && (

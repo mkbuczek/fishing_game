@@ -1,0 +1,58 @@
+.auto-fisher-button {
+    --wood: #6b4a30;
+    --wood-dark: #4a3220;
+    --gold: #e8b04b;
+
+    position: absolute;
+    bottom: 105px;
+    left: 50%;
+    transform: translateX(-50%);
+    width: 120px;
+    height: 40px;
+    background: linear-gradient(180deg, #04d193, #516300);
+    border: 3px solid #005532;
+    border-bottom: none;
+    border-radius: 12px 12px 0 0;
+    color: #fff;
+    font-size: 0.65rem;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.03em;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    box-shadow: 0px -2px 6px hsla(0, 0%, 0%, 0.3);
+    transition: transform 0.1s ease, box-shadow 0.1s ease;
+}
+
+.auto-fisher-button:hover:not(:disabled) {
+    transform: translateX(-50%) translateY(-2px);
+}
+
+.auto-fisher-button:disabled {
+    background: #3a3a3a;
+    border-color: #666;
+    color: #999;
+    cursor: not-allowed;
+    box-shadow: none;
+}
+
+.auto-fisher-button-badge {
+    position: absolute;
+    top: -6px;
+    right: -6px;
+    width: 25px;
+    height: 25px;
+    background: #d97b7b;
+    border: 2px solid var(--gold);
+    border-radius: 50%;
+    font-size: 1rem;
+    font-weight: bold;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: #fff;
+    line-height: 1;
+    pointer-events: none;
+}

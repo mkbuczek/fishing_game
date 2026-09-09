@@ -173,6 +173,10 @@
     width: 600px;
 }
 
+.panel-auto-fisher {
+    height: 200px;
+}
+
 @keyframes panel-overlay-fade-in {
     from { opacity: 0; }
     to { opacity: 1; }

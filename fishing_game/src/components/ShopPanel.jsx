@@ -62,7 +62,7 @@ export default function ShopPanel({ onClose, pearls, goldenPearls, ownedUpgrades
                         return (
                             <div key={upgrade.id} className="shop-item shop-item-maxed">
                                 <div className="shop-item-row">
-                                    <span className="shop-item-name">{getUpgradeLabel(upgrade, currentLevel, lastTier.name)}</span>
+                                    <span className="shop-item-name">{getUpgradeLabel(upgrade, currentLevel, lastTier.name, isMaxed)}</span>
                                     <span className="shop-item-cost">MAXED</span>
                                 </div>
                             </div>
@@ -87,7 +87,7 @@ export default function ShopPanel({ onClose, pearls, goldenPearls, ownedUpgrades
                             onClick={() => onPurchase(upgrade)}
                         >
                             <div className="shop-item-row">
-                                <span className="shop-item-name">{isLocked ? '???' : getUpgradeLabel(upgrade, currentLevel, nextTier.name)}</span>
+                                <span className="shop-item-name">{isLocked ? '???' : getUpgradeLabel(upgrade, currentLevel, nextTier.name, isMaxed)}</span>
                                 <span className="shop-item-cost">{isLocked ? '' : `${cost}${currencyIcons[currency] || '🦪'}`}</span>
                             </div>
                             <span className="shop-item-tooltip">
