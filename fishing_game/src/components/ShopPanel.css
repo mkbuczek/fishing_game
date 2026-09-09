@@ -44,6 +44,7 @@
 .shop-item-cost {
     color: var(--available);
     font-weight: 600;
+    text-shadow: 2px 2px 2px hsla(0, 0%, 0%, 0.9);
 }
 
 .shop-item-unavailable {
@@ -74,16 +75,6 @@
     overflow-wrap: break-word;
 }
 
-.shop-empty {
-    font-weight: bold;
-    font-size: 1.1rem;
-    color: var(--cream);
-    text-shadow: 0px 0px 10px hsla(0, 0%, 0%, 0.9);
-    text-align: center;
-    white-space: normal;
-    overflow-wrap: break-word;
-}
-
 .shop-item-locked {
     background: linear-gradient(180deg, hsl(225, 16%, 51%), hsl(225, 19%, 12%));
     border: 2px solid hsl(240, 1%, 19%);
@@ -107,6 +98,33 @@
     white-space: normal;
     overflow-wrap: break-word;
     margin: 0;
+}
+
+.shop-upgrade-wrapper {
+    display: flex;
+    flex-direction: column;
+    width: 100%;
+    gap: 10px;
+}
+
+.shop-upgrade-group {
+    padding: 10px;
+    border: 2px solid hsl(224, 97%, 13%);
+    border-radius: 10px;
+    background: linear-gradient(180deg, hsl(224, 60%, 22%), hsl(224, 70%, 11%));
+}
+
+.shop-upgrade-children {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+    padding-left: 20px;
+    border-left: 2px solid rgba(122, 141, 252, 0.4);
+    margin-left: 6px;
+}
+
+.shop-item-child {
+    font-size: 0.9rem;
 }
 
 .shop-item-maxed {

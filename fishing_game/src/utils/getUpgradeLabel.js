@@ -1,9 +1,12 @@
-export function getUpgradeLabel(upgrade, tierIndex, tierName) {
+export function getUpgradeLabel(upgrade, tierIndex, tierName, isMaxed) {
     const currency = upgrade.currency ?? 'pearls'; //default to pearls
+    let prependText;
 
     if (currency === 'goldenPearls') {
-        return `Unlock ${tierName}`; //goldenPearls
+        prependText = isMaxed ? "" : "Unlock";
+        return `${prependText} ${tierName}`.trim(); //goldenPearls
     }
 
-    return `Tier ${tierIndex + 1}: ${tierName}`; //pearls
+    const displayTier = isMaxed ? upgrade.tiers.length : tierIndex + 1;
+    return `Tier ${displayTier}: ${tierName}`; //pearls
 }
