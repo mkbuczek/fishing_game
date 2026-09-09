@@ -7,5 +7,6 @@ export function getUpgradeLabel(upgrade, tierIndex, tierName, isMaxed) {
         return `${prependText} ${tierName}`; //goldenPearls
     }
 
-    return `Tier ${tierIndex + 1}: ${tierName}`; //pearls
+    const displayTier = isMaxed ? upgrade.tiers.length : tierIndex + 1;
+    return `Tier ${displayTier}: ${tierName}`; //pearls
 }

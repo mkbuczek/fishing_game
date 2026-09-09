@@ -114,8 +114,9 @@ const upgrades = [
     {
         id: "auto-fisher-speed",
         category: "auto",
+        parentId: "auto-fisher",
         effectKey: "autoFisherInterval",
-        tooltip: "Auto-Fisher catches fish quicker",
+        tooltip: "Catches fish quicker",
         currency: "goldenPearls",
         baseCost: 1,
         costGrowth: 1.75,
@@ -130,8 +131,9 @@ const upgrades = [
     {
         id: "auto-fisher-modifier",
         category: "auto",
+        parentId: "auto-fisher",
         effectKey: "autoFisherMaxModifier",
-        tooltip: "Auto-Fisher can catch fish with better modifiers",
+        tooltip: "Can catch fish with better modifiers",
         currency: "goldenPearls",
         baseCost: 1,
         costGrowth: 1.75,
@@ -145,8 +147,9 @@ const upgrades = [
     {
         id: "auto-fisher-count",
         category: "auto",
+        parentId: "auto-fisher",
         effectKey: "autoFisherCatchCount",
-        tooltip: "Auto-Fisher can catch extra fish",
+        tooltip: "Catches extra fish",
         currency: "goldenPearls",
         baseCost: 1,
         costGrowth: 1.75,
