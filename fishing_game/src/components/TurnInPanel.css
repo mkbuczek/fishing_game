@@ -1,0 +1,51 @@
+.turnin-instructions {
+    color: #f5efe0;
+    font-weight: bold;
+    text-align: center;
+    margin: 0 0 16px;
+    text-shadow: 2px 2px 4px hsla(0, 0%, 0%, 0.9);
+}
+
+.turnin-grid .inventory-item-square:not(.turnin-item-inactive):hover {
+    transform: translateY(-2px);
+    cursor: pointer;
+    transition: transform 0.1s ease;
+}
+
+.turnin-item-inactive {
+    opacity: 0.35;
+    filter: grayscale(0.6);
+    cursor: default;
+    pointer-events: none;
+}
+
+.turnin-item-selected {
+    border-color: var(--gold, #e8b04b) !important;
+    filter: brightness(1.05);
+}
+
+.turnin-confirm-button {
+    position: absolute;
+    bottom: 8px;
+    margin-top: 14px;
+    align-self: center;
+    background: linear-gradient(180deg, var(--wood, #6b4a30), var(--wood-dark, #4a3220));
+    border: 2px solid var(--gold, #e8b04b);
+    border-radius: 8px;
+    color: #f5efe0;
+    padding: 10px 24px;
+    font-weight: bold;
+    cursor: pointer;
+    text-shadow: 2px 2px 4px hsla(0, 0%, 0%, 0.9);
+    box-shadow: 2px 2px 4px hsla(0, 0%, 0%, 0.9);
+    transition: transform 0.1s ease;
+}
+
+.turnin-confirm-button:not(.turnin-confirm-button:disabled):hover {
+    transform: translateY(-2px);
+}
+
+.turnin-confirm-button:disabled {
+    opacity: 0.5;
+    cursor: default;
+}

@@ -177,6 +177,15 @@
     height: 200px;
 }
 
+.panel-quest {
+    height: 500px;
+    width: 900px;
+}
+
+.panel-turnin {
+    width: 950px;
+}
+
 @keyframes panel-overlay-fade-in {
     from { opacity: 0; }
     to { opacity: 1; }

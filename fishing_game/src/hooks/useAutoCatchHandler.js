@@ -13,8 +13,11 @@ export function useAutoCatchHandler({
   sellMultiplier,
   processAchievementUnlocks,
   addToast,
+  incrementScopedCatch,
 }) {
   function handleAutoCatch(catches) {
+    incrementScopedCatch('auto');
+    
     if (isAutoSellEnabled) {
       let runningPearls = 0;
       let runningTotalCatches = totalCatches;
