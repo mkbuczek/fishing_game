@@ -16,7 +16,7 @@ export function useAutoCatchHandler({
   incrementScopedCatch,
 }) {
   function handleAutoCatch(catches) {
-    incrementScopedCatch('auto');
+    incrementScopedCatch('auto', catches.length);
     
     if (isAutoSellEnabled) {
       let runningPearls = 0;

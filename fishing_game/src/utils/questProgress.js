@@ -1,10 +1,19 @@
+import fishModifiers from "../data/fishModifiers";
 import { getModifierCatchCount } from "./bestiaryStats";
 
 const lifetimeValueGetters = {
     totalCatches: (objective, context) => context.totalCatches,
     bestiaryCount: (objective, context) => Object.keys(context.bestiary).length,
     achievementCount: (objective, context) => context.unlockedAchievements.length,
-    modifierCatchCount: (objective, context) => getModifierCatchCount(context.bestiary, objective.modifierId),
+    modifierCatchCount: (objective, context) => {
+        if (objective.modifierId === null) {
+            // "any modifier" = sum every non-common modifier's catch count
+            return fishModifiers
+                .filter((modifier) => modifier.id !== 'common')
+                .reduce((sum, modifier) => sum + getModifierCatchCount(context.bestiary, modifier.id), 0);
+        }
+        return getModifierCatchCount(context.bestiary, objective.modifierId)
+    },
 };
 
 function getLifetimeValue(objective, context) {

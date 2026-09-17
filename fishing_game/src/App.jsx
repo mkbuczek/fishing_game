@@ -27,6 +27,7 @@ import AutoFisherPanel from './components/AutoFisherPanel';
 import QuestPanel from './components/QuestPanel';
 import { useQuests } from './hooks/useQuests';
 import TurnInPanel from './components/TurnInPanel';
+import { useNpcUnlockNotifier } from './hooks/useNpcUnlockNotifier';
 
 function App() {
   const baseStats = {
@@ -78,6 +79,12 @@ function App() {
   const playerStats = computePlayerStats(baseStats, ownedUpgrades);
   // check if inventory is full
   const isInventoryFull = inventory.length === playerStats.inventoryCapacity;
+  // set up NPC unlock notifier
+  const { announcedNpcs, resetAnnouncedNpcs } = useNpcUnlockNotifier(
+    { bestiary, totalCatches, unlockedAchievements },
+    addToast,
+    savedData?.announcedNpcs
+  );
 
   const { handleAutoCatch } = useAutoCatchHandler({
     isAutoSellEnabled,
@@ -95,7 +102,7 @@ function App() {
     incrementScopedCatch,
   });
 
-const { isPaused: isAutoFisherPaused } = useAutoFisher({
+  const { isPaused: isAutoFisherPaused } = useAutoFisher({
     ownedUpgrades,
     playerStats,
     inventory,
@@ -263,10 +270,13 @@ const { isPaused: isAutoFisherPaused } = useAutoFisher({
       isAutoFisherEnabled,
       isAutoSellEnabled,
       questState,
+      announcedNpcs,
     };
 
     localStorage.setItem('fishingGameSave', JSON.stringify(saveData));
-  }, [pearls, ownedUpgrades, inventory, bestiary, totalCatches, totalPearlsEarned, unlockedAchievements, goldenPearls, isAutoFisherEnabled, isAutoSellEnabled, questState]);
+  }, [pearls, ownedUpgrades, inventory, bestiary, totalCatches, totalPearlsEarned,
+      unlockedAchievements, goldenPearls, isAutoFisherEnabled, isAutoSellEnabled,
+      questState, announcedNpcs]);
 
   function loadSave() {
     try {
@@ -289,6 +299,7 @@ const { isPaused: isAutoFisherPaused } = useAutoFisher({
     setIsAutoFisherEnabled(false);
     setIsAutoSellEnabled(false);
     resetQuestState();
+    resetAnnouncedNpcs();
   }
 
   // handle selling fish from the inventory
@@ -411,8 +422,8 @@ const { isPaused: isAutoFisherPaused } = useAutoFisher({
           onClose={() => setActivePanel(null)}
           context={{ bestiary, totalCatches, unlockedAchievements }}
           questState={questState}
-          acceptQuest={acceptQuest}
-          claimQuest={(npcId) => claimQuest(npcId, setPearls)}
+          acceptQuest={(npcId) => acceptQuest(npcId, addToast)}
+          claimQuest={(npcId) => claimQuest(npcId, setPearls, addToast)}
           onOpenTurnIn={(npcId, objective) => setTurnInTarget({ npcId, objective })}
         />
       )}
@@ -422,7 +433,7 @@ const { isPaused: isAutoFisherPaused } = useAutoFisher({
           onClose={() => setTurnInTarget(null)}
           inventory={inventory}
           objective={turnInTarget.objective}
-          onConfirm={(instanceIds) => turnInFish(turnInTarget.npcId, turnInTarget.objective.id, instanceIds, setInventory)}
+          onConfirm={(instanceIds) => turnInFish(turnInTarget.npcId, turnInTarget.objective.id, instanceIds, setInventory, addToast)}
         />
       )}
 

@@ -4,7 +4,7 @@ const questNpcs = [
         name: 'Marlon',
         specialty: 'Species Variety',
         icon: '🎣',
-        unlockCondition: null,
+        unlockCondition: { type: 'totalCatches', target: 5 },
         questLine: [
             {
                 id: 'npc1-quest-1',
@@ -23,7 +23,7 @@ const questNpcs = [
                         id: 'obj-2',
                         type: 'totalCatches',
                         scope: 'lifetime',
-                        target: 3,
+                        target: 10,
                     },
                 ],
                 reward: { pearls: 50 },
@@ -57,7 +57,7 @@ const questNpcs = [
         name: 'Celestia',
         specialty: 'Modifier Specialist',
         icon: '💎',
-        unlockCondition: { type: 'modifierCatchCount', target: 5, modifierId: 'gold' },
+        unlockCondition: { type: 'modifierCatchCount', target: 1, modifierId: null },
         questLine: [
             {
                 id: 'npc2-quest-1',
